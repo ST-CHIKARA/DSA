@@ -58,7 +58,7 @@ print(result == output) # will return False as this was just a crude way to unde
 
 # now that we saw a single test case and tested it (crudely) its not enough, we need multiple test cases so we will represent our test cases as dictionaries to make it easier to test them once we complete our function for example the above test can be represented as follows 
 
-# 1st test case 
+# 0 test case 
 
 test = {
     'input':{
@@ -84,7 +84,7 @@ tests.append(test)
 
 
 
-# 2nd test case 
+# 1st test case 
 # the number query occurs somewhere in the middle of the list of cards
 
 tests.append({
@@ -96,7 +96,7 @@ tests.append({
 })
 
 
-# 3rd test case
+# 2nd test case
 # query is the 1st element in the list of cards
 
 tests.append({
@@ -109,7 +109,7 @@ tests.append({
 
 
 
-# 4th test case 
+# 3rd test case 
 # query is the last element in the list of cards 
 
 tests.append({
@@ -121,7 +121,7 @@ tests.append({
 })
 
 
-# 5th test case 
+# 4th test case 
 # list of cards just contain one element which is query
 
 tests.append({
@@ -133,7 +133,7 @@ tests.append({
 })
 
 
-# 6th test case 
+# 5th test case 
 # what if the query is not present in the list of cards we will assume the function will return or we can say the output in this case will be -1
 
 tests.append({
@@ -146,7 +146,7 @@ tests.append({
 
 
 
-# 7th test case 
+# 6th test case 
 # list of cards is empty here also we will assume out output to be -1
 
 tests.append({
@@ -159,7 +159,7 @@ tests.append({
 
 
 
-# 8th test case
+# 7th test case
 # the list cards contain repeating numbers
 
 tests.append({
@@ -173,7 +173,7 @@ tests.append({
 
 
 
-# 9th test case
+# 8th test case
 # the query occurs at more than one position in the list cards:- in this case we want out output to be deterministic which means we want a single correct answer not a random one and as you access elements in the list and we go through list the seeking of the element stop at the 1st occurrence of the element we are seeking so we will make out output in this context
 
 tests.append({
@@ -249,3 +249,108 @@ def locate_card(cards,query):
 print(locate_card(test['input']['cards'],test['input']['query'])) # what this line does is something called accessing the nested data structure and since we are working with a dictionary its called nested dictionary access. as our function needs 2 arguments namely cards and query and we have our test case structure already mapped out previously in form of nested dictionaries when we write test['input']['cards'] it is like pulling out values out of a box test is the main box inside it is input so we open the input box input has 2 keys cards and query so firstly we open cards box and take out its value and feed it to the function now the 1st argument called cards have a value and our function can access it, now the next test['input']['query'] also behaves the same way we open test inside we see input and inside that we see query we take out that value and feed it to the function. now our function have both the arguments it needs to execute 
 print(locate_card(**test['input'])) # we can write the above nested dict accessing like this way like we wrote earlier way above in the starting what ** does is that it unpacks the dictionary into keyword arguments like they are in the nested structure as inside input there is cards and query and python converts this locate_card(**test['input']) into this locate_card(cards=[13,11,10,7,4,3,1,0], query=7) just like we want 
 print(locate_card(**test['input']) == test['output'])
+print()
+
+
+
+# now that we have our solution we will add HELPER UTILITIES FUNCTIONS to help us test our test cases 
+
+import time
+
+# this function is for only 1 test case as we are just trying to build logic on how can we make a function that will help us in evaluating test cases 
+
+def evaluate_test_case(func,test): # func:- func we want to test
+    inputs = test['input'] # we are extracting the inputs that are cards and query from the test and putting it into the variable inputs which will look something like this (inputs = {'cards':[13,11,10,7,4,3,1,0], 'query':7})
+    expected = test['output'] # extracting the expected result and putting it into a variable
+
+    start = time.time() # returns the current system time as a float measured in sec we are doing this because we want to measure the executing time of our func
+    actual = func(**inputs) # this becomes func(unpacking of inputs which we talked about earlier)
+    end = time.time() # the timer that got started when we did start stops here and now we have a time frame from start to end of the executing 
+
+    exec_time = (end - start) * 1000 # since end and start are in seconds we convert them to milliseconds by multiplying their difference by 1000 because 1 sec = 1000 ms (for eg 0.005sec * 1000 = 5 ms)
+
+    passed = actual == expected # now we compare our return value of func that is stored in actual with the expected that stores our expected output and then store their comparison result in our variable passed 
+
+    print('Input:',inputs) 
+    print('Expected output:',expected)
+    print("Actual output:",actual)
+    print('Execution time:',round(exec_time,4),'ms') # rounding the exec_time till 4 decimal places as the exec_time can easily have 10-15 decimal places which are not necessary to us 
+    print('Test result:','PASSED' if passed else 'FAILED') # we are using a ternary conditional expression here for writing a if else statement in one line following this syntax (value_if_true if condition else value_if_false)
+    print()
+
+    return actual,passed,exec_time
+
+(evaluate_test_case(locate_card,test))
+print()
+
+
+# now we will write a function that can run all test cases at once 
+
+def evaluate_test_cases(func,tests):
+    for i, test in enumerate(tests): # here we are using the enumerate() func because when we use it, it adds an index infront of each item of an iterable which in our case is tests list having multiple test cases and its returns the index and item as tuple (index,item)
+        print(f"Test case {i}") # will output Test case 1, Test case 2.......... Test case 8
+        evaluate_test_case(func,test) 
+
+# 2nd iteration of evaluate_test_cases for additional summary(just a visual effect) functionality
+
+def evaluate_test_cases(func,tests):
+    total = len(tests) # to get total number of tests 
+    passed = 0 # counter initialization to calculate passed tests
+    failed = 0 # counter initialization to calculate failed tests 
+    for i,test in enumerate(tests):
+        print(f"Test case {i}")
+        _,test_passed,_ = evaluate_test_case(func,test) # since our evaluate_test_case returns 3 values that are actual,passed and exec_time we only need passed and store it in variable test_passed 
+        if test_passed: # condition for the counter
+            passed += 1
+        else:
+            failed += 1
+    print('SUMMARY')
+    print(f'TOTAL:{total}, PASSED:{passed}, FAILED:{failed}')
+
+# print(evaluate_test_cases(locate_card,tests))
+# print()
+
+
+# now that we ran our tests we came across an error in test case 6 which says IndexError:list index out of range and that is because in test case 6 we have a empty list and when we try to access it by our locate_card function especially with this line if cards[position] == query: return position when this line executes it finds a empty list and since there is no position to return we come across our error.now to debug this error or should we say this bug we have to write our locate_card function keeping in mind edge cases like this and write it out so that we see what happened and where it happened although we know why the error occurred we can still write our function so that it displays each input that is being fed into the function because when we were testing with evaluate_test_cases as soon as it reached test case 6 it through the error and didnt display the inputs and the expected output we are giving the locate_card func 
+
+
+def locate_card(cards,query):
+    position = 0
+    print('cards:',cards)
+    print('query:',query)
+    while True:
+        print('position:',position)
+        if cards[position] == query:
+            return position
+        position += 1
+        if position == len(cards):
+            return -1 
+
+cards6 = tests[6]['input']['cards']
+query6 = tests[6]['input']['query']
+
+# print(locate_card(cards6,query6)) 
+# print()
+
+
+# now to make our locate_card func more robust and accurate in handling the edge cases we will write it like this 
+
+def locate_card(cards,query):
+    position = 0
+    while position < len(cards): # we are checking whether we have reached the end of list before accessing an element from it in this case of position is 0 and len of list is also 0 this condition and code block related to it wont execute and -1 will be returned 
+        if cards[position] == query:
+            return position
+        position += 1
+    return -1
+
+
+print(locate_card(cards6,query6))
+print()
+
+
+evaluate_test_cases(locate_card,tests)
+print()
+
+# all tests passed and with that one thing becomes clear having multiple test cases was a boon for us without them we may never have discovered the error we faced in test case 6 
+
+# all that we learnt till now was to help us understand how to solve a problem but this implementation and testing of brute force solution is usually not done in interviews when we become proficient in solving problems it becomes easy (said by the teacher **haha**) to figure out the time complexity of the brute force solution when stating the solution in simpler terms
