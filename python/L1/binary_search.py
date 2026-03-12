@@ -354,3 +354,95 @@ print()
 # all tests passed and with that one thing becomes clear having multiple test cases was a boon for us without them we may never have discovered the error we faced in test case 6 
 
 # all that we learnt till now was to help us understand how to solve a problem but this implementation and testing of brute force solution is usually not done in interviews when we become proficient in solving problems it becomes easy (said by the teacher **haha**) to figure out the time complexity of the brute force solution when stating the solution in simpler terms
+
+
+# Step 5 :-
+
+
+# Now we will analyze the algorithm's complexity and identify inefficiencies if any. The question states that Alice wants Bob to pick out the card containing a given number by turning over as few cards as possible. In programming terms we stated this requirement as minimizing the number of times we access elements from the list 'cards'.
+
+# Before we can minimize that number, we need a way to measure it. In our current solution (linear search), we start from the first element in the list and keep checking each card one by one until we find the query.
+
+# If the query happens to be near the beginning of the list, Bob will find it quickly by flipping only a few cards. However, if the query is the last element in the list, or if the query is not present at all, Bob would have to check every card.
+
+# The field of study concerned with finding the amount of time, space, or other resources required to complete the execution of computer programs is called the analysis of algorithms. The process of figuring out the best algorithm to solve a given problem is called algorithm design and optimization.
+
+
+# COMPLEXITY AND BIG O NOTATION
+
+
+# Complexity of an algorithm is a measure of the amount of time and/or space required by an algorithm for an input of a given size, usually denoted by N. Unless otherwise stated, the term complexity usually refers to the worst-case complexity, i.e., the highest possible time or space taken by the algorithm to process an input. In our case, the worst case would be Bob flipping every card in the list to find the card he is looking for.
+
+# Worst-case complexity is often expressed using Big O notation.
+
+# Suppose there are N cards on the table. In the worst case Bob may need to access up to N elements from the list before reaching the answer. Because the number of operations grows with the number of cards, we say that the time complexity of linear search is O(N), which is pronounced as "order of N".
+
+# In other words, if the number of cards doubles, the number of checks Bob might need to perform also roughly doubles. Time complexity is sometimes also called the running time of the algorithm.
+
+# To put it more simply, time complexity describes how the amount of work grows when the input size grows. For example, if Bob has 30 cards in front of him and he has to check each of them to find the required number, he may need to perform 30 checks. If the number of cards increases to 50, the number of checks in the worst case also becomes 50. So as the input increases, the work increases proportionally.
+
+
+# On the other hand, the space complexity of our linear search algorithm depends on how much memory the algorithm uses during its execution. In simpler terms, space complexity tells us how much extra memory the algorithm needs as the input grows.
+
+# Here we are not talking about the memory required by the input itself because the input (the list of cards) already exists before the algorithm starts. Instead, we are only concerned with the extra working memory used by the algorithm.
+
+# In our algorithm we use a few variables such as 'cards' and 'query', which are the inputs provided to the function. Other than these, we only create one additional variable called 'position'.
+
+# No matter how large the input becomes, whether the list contains 30 cards or 300 cards, we still use the same variable 'position' to access elements in the list using the expression (cards[position] == query).
+
+# Whether we are checking cards[3] == query or cards[300] == query, the number of variables used by the algorithm does not increase as the input size grows.
+
+# That is why we say the space complexity of linear search is O(1), which means constant space (or constant memory usage).
+
+
+# To wrap this up, let's talk about the relationship between input size and the number of steps performed by the algorithm.
+
+# We usually denote the size of the input as N. If the list of cards contains 8 cards, then N = 8. In the worst-case scenario, linear search may need to check all 8 cards before finding the query.
+
+# This means that in the worst case the number of steps performed by the algorithm is proportional to N.
+
+# Sometimes the number of steps is written as cN, where c is a constant that depends on the number of operations performed in each iteration and the time taken to execute each statement.
+
+
+# When explaining algorithms using Big O notation, we drop fixed constants and lower-order terms in order to capture the overall growth trend of the algorithm.
+
+# For example, suppose algorithm A takes N steps and algorithm B takes 3N steps. If N = 10, then algorithm A takes 10 steps and algorithm B takes 30 steps. Although algorithm A is faster, both algorithms grow linearly with the input size. If the input doubles, the number of steps also doubles in both cases.
+
+# Because both algorithms grow proportionally with N, we describe their time complexity as O(N). Big O notation focuses on the growth pattern of the algorithm rather than small constant differences.
+
+
+# Before discussing lower-order terms, we need to understand growth in algorithms. Growth refers to how the amount of work changes when the input size increases.
+
+# In linear search we observe linear growth O(N) in time complexity, where the number of steps increases proportionally with the input size. We also observed constant growth O(1) in space complexity, where the memory used by the algorithm remains the same regardless of input size.
+
+# Another common growth pattern is quadratic growth, usually seen when algorithms contain nested loops. In this case the work grows with the square of the input size and is represented as O(N**2).
+
+# For example, suppose an algorithm takes the following number of steps:
+
+# 3N**2 + 5N + 10
+
+# This means:
+# 3 × N² operations
+# 5 × N operations
+# 10 constant operations
+
+# If N = 10:
+
+# 3*(10*10) = 300
+# 5*10 = 50
+# +10 = 360 steps
+
+# If N = 1000:
+
+# 3*(1000*1000) = 3,000,000
+# 5*1000 = 5,000
+# +10 = 3,005,010 steps
+
+# As N becomes large, the terms 5N and 10 become very small compared to 3N². They barely affect the total work performed by the algorithm.
+
+# Big O notation therefore focuses on the fastest-growing term. In this case, N² grows much faster than N or any constant value. Therefore the time complexity is written as: O(N²)
+
+# The smaller terms such as N and the constant value 10 are ignored because they have very little impact on the overall growth of the algorithm.
+
+
+
