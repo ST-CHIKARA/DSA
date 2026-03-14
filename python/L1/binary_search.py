@@ -446,3 +446,62 @@ print()
 
 
 
+
+# Step 6 :- 
+
+# The solution we implemented works correctly, but only in the case of linear search and it is not the most efficient way to solve the problem. The problem statement tells us to find the number with less number of cards turning and also tells us that the cards are already arranged in decreasing order. This means the data is sorted, and sorted data often allows us to search more efficiently.
+
+# Instead of checking cards one by one, we can use the ordering of the cards to eliminate half of the remaining cards at each step. by this we mean that the next best idea would be to pick a random card, and use the fact that the list is sorted, to determine whether the target card lies to the left or right of it in fact, if we pick the middle card, we can reduce the number of additional cards to be tested to half the size of the list. Then, we can simply repeat the process with each half. This technique is called BINARY SEARCH.
+
+# lets say we have a list which have cards = 9,7,6,4,3,2,1 and the query = 6 and the expected output is 2 which is the position where the 6 is at in the list now how do we find 6 with the least turning of cards? thats where binary search comes in handy as we know that our list is sorted in decreasing order total positions in the list is 6, we are referring position because we access the elements with the help of position (**we can simplify this by saying the list has 7 elements but i found the position as a more simpler way to explain my understanding**). As there as 6 position obviously 3 is the middle lets say we accessed the element 3 of the list and saw 4 (**we are obviously checking against query this explanation was just to simplify the procedure.**), as we know the list is sorted 4 is less than 6 so the positions 4,5,6 get invalidated as they only have numbers less than 4 and we are left with the position 0,1,2 that is on the left side of the list. Now we just have to work with left side of the list lets say we again access the middle element of the left side of the list that will be position 1 and at position 1 we find 7  now 7>6 and at position 3 we had 4 which is < 6 so we are only left with position 2 as the only option where 6 can be if it is in the list so now when we check position against query and if there is a number 6 we get returned its position and voila we have solved our question with the least number of flips. 
+
+
+
+
+# Step 7 :-
+
+# Now that we have found out a correct technique to implement we repeat steps 3 to 6 and step 3 was come up with a correct solution and state it in plain english 
+
+# here is how binary search can be implemented to our solution 
+# 1. access the middle element of the list 
+# 2. compare against query and if it matches return the middle position as the answer or,
+# 3. if the middle element is less than queried number then search the first half of the list or we can also say left side of the list 
+# 4. and if it is greater than the queried number then search the second half of the list or we can say right side of the list 
+# 5. if no more elements remain return -1 
+
+
+
+# Step 8 :- 
+
+# now that we have stated our new solution simply we implement it by writing out our new locate_card function and then test it using our test cases and also fix bugs (complications if any arise)
+
+
+def locate_card(cards,query):
+    lo,hi = 0 , len(cards) - 1 # here 2 variables are made where lo represents the 1st position in the list that is 0 and hi represents the next position in the list after 0 and that will be calculated by len(cards) - 1 and the value that we get from it will be stored in hi 
+    while lo <= hi: # this condition simply means while we have a valid search space continue searching and by a valid search space we mean is that till lo is either smaller or equal to the hi we have a valid search space for eg if lo is 0 and hi is 6 that means we have the whole search space then lo becomes 1 and search space becomes 5 our search space got smaller and with each iteration it becomes smaller 
+        mid = (lo+hi) // 2 # to get the middle element of the list
+        mid_number = cards[mid] # to access the element 
+        print("lo:",lo, ",hi:",hi, ",mid:",mid, ",mid_number:",mid_number) 
+
+        if mid_number == query: 
+            return mid
+        elif mid_number < query: # if mid_number is less than query for eg in our previous example mid position was 3 and it have the mid_number 4 in the list and query was 6 this is the code that shows us that scenario. so 4<6 
+            hi = mid - 1 # now what we are doing here is we are invalidating the second half of the list by shrinking the valid search space as in our example mid = 3 now hi becomes 3- 1 = 2 and our working space shifts from 0-6 to 0-2, we just discarded the second half of the list and will now work with first half. after the execution of this condition the loop goes back to while lo <=hi which becomes 0<=2 then we find middle again 0+2//2 = 1 , then mid_number = cards[1] = 7 then this block turns out false and we move to next conditional statement.
+        elif mid_number > query: # 7 > 6 from our example turns out true for this 
+            lo = mid + 1 # it becomes lo = 1+1 = 2 and now lo is 2 and hi is 2 # now next iteration of the loop begins while 2<=2 since its true we move forward to finding mid 2+2//2 = 2 now next line becomes mid_number = cards[2] which gives us 6 now when in the conditional statement it is checked if mid_number == query and now its 6 ==6 we get the value of mid which is 2 returned and hence we have solved our problem in the 3rd iteration and solved our problem with less steps.
+
+    return -1 # if query not there return -1
+
+print('--BINARY SEARCH TESTS--')
+print()
+evaluate_test_cases(locate_card,tests)
+print()
+
+
+# ok as we tested the test cases from the total of 9 test cases 8 passed and the last test case test case 8 (counting from 0) failed where the input was 'cards':[8,8,6,6,6,6,6,6,6,3,2,2,2,1],'query':6 and expected output:2. when binary search executed on it what it did was it took the lo=0, hi=13 , mid=0+13//2 = 6 mid_number = cards[6] = 6 , if mid_number == query 6==6 return mid = 6 and voila for binary search the answer is there but we needed the 1st instance where the 6 first occurs that why the expected output is 2 not 6
+
+# so what is the fix for this edge case ?
+
+# when we find that cards[mid] == query we need to check whether the card is the first occurrence in the list and if not we keep checking the previous number and if yes then we have our answer 
+
+# we will write a new helper function called test_location for this which will take cards,query and mid as the arguments(inputs)
