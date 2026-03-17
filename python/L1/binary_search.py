@@ -255,6 +255,7 @@ print()
 
 # now that we have our solution we will add HELPER UTILITIES FUNCTIONS to help us test our test cases 
 
+from ctypes.wintypes import POINT
 import time
 
 # this function is for only 1 test case as we are just trying to build logic on how can we make a function that will help us in evaluating test cases 
@@ -477,7 +478,7 @@ print()
 
 
 def locate_card(cards,query):
-    lo,hi = 0 , len(cards) - 1 # here 2 variables are made where lo represents the 1st position in the list that is 0 and hi represents the next position in the list after 0 and that will be calculated by len(cards) - 1 and the value that we get from it will be stored in hi 
+    lo,hi = 0 , len(cards) - 1 # here 2 variables are made where lo represents the left boundary of the current search space that is 0 and hi represents the right boundary of the current search space that will be calculated by len(cards) - 1 and the value that we get from it will be stored in hi 
     while lo <= hi: # this condition simply means while we have a valid search space continue searching and by a valid search space we mean is that till lo is either smaller or equal to the hi we have a valid search space for eg if lo is 0 and hi is 6 that means we have the whole search space then lo becomes 1 and search space becomes 5 our search space got smaller and with each iteration it becomes smaller 
         mid = (lo+hi) // 2 # to get the middle element of the list
         mid_number = cards[mid] # to access the element 
@@ -505,3 +506,41 @@ print()
 # when we find that cards[mid] == query we need to check whether the card is the first occurrence in the list and if not we keep checking the previous number and if yes then we have our answer 
 
 # we will write a new helper function called test_location for this which will take cards,query and mid as the arguments(inputs)
+
+
+def test_location(cards,query,mid):
+    mid_number = cards[mid]
+    print("mid:" ,mid, ",mid_number:",mid_number)
+    if mid_number == query:
+        if mid - 1 >= 0 and cards[mid-1] == query: # 1st condition checks whether a previous position exists or not so we don’t go out of bounds, for eg if mid is 6 then mid-1 = 5 >= 0 is true but if mid is 0 then mid-1 = -1 >= 0 is false, and 2nd condition checks the previous position card with query like if cards[mid-1] == query and if the query is 6 and at cards[5] there is also 6 then we return left, but if this condition comes false then it means we have found the first occurrence of query and we return found
+            return "left"
+        else:
+            return "found"
+    elif mid_number < query: # if card < query we return left because if query is 8 and mid_number is 6 as the list is sorted we get to know that we need to move left as left side will have bigger numbers
+        return "left"
+    else: # its like saying else: mid_number>query
+        return "right"
+    
+# now we again simplify our locate card function
+
+def locate_card(cards,query):
+    lo,hi=0, len(cards) - 1
+    while lo<=hi:
+        print("lo:",lo, ",hi:",hi)
+        mid = (lo+hi)//2
+        result = test_location(cards,query,mid) # instead of doing all logic inside locate_card we delegate here 
+
+        if result == "found":
+            return mid
+        elif result == "left":
+            hi = mid - 1 # shrink search to left
+        elif result == "right":
+            lo = mid + 1 # shrink search to right
+    return -1
+
+# in our improved version when we test with the edge case and the mid is 6 and at mid the number is also 6 in 1st iteration when we compare it with query and then we compare the previous position to query and we get returned left because on position 5 the card was also 6 we move to the locate_card function straight after this and the condition that gets fulfilled with this is elif result == "left" and it makes hi = 6-1 = 5 now our search space becomes 0-5 when it was 0-13 previously in just one iteration. then in 2nd iteration our mid becomes (0+5)//2 = 2 now mid_number = cards[2] = 6 now we check against query it is indeed 6 == 6 then we check our condition and when cards[mid-1] = cards[2-1] = cards[1] = 8 and 8 == 6 becomes false we know we have found our query is the 1st occurrence in the list and then we come to locate_card our condition if result == "found" becomes true and the mid position gets returned 
+
+print("-----AFTER FIXING EDGE CASE-----")
+print()
+evaluate_test_cases(locate_card,tests)
+print()
