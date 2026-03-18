@@ -544,3 +544,12 @@ print("-----AFTER FIXING EDGE CASE-----")
 print()
 evaluate_test_cases(locate_card,tests)
 print()
+
+
+
+
+# Step 9 :-
+
+# Now we will analyze the complexity of the binary search and identify any inefficiencies if any
+
+# Binary search works by repeatedly dividing the search space into half instead of checking elements one by one like linear search, which allows us to eliminate a large number of elements in each step. Because of this, the number of steps required depends on how many times we can divide the input size (N) by 2 until only one element remains. This idea is what we call a logarithm, where log₂(N) simply means how many times we multiply 2 to reach N, or equivalently, how many times we can divide N by 2 to reach 1. The base 2 comes from the fact that in binary search we always split the data into two halves at every step. Since this number grows very slowly even when N becomes very large, the time complexity of binary search is O(log N). On the other hand, the space complexity is O(1) because we only use a fixed number of variables like lo, hi, and mid, and this does not increase with input size. Therefore, binary search is highly efficient for sorted data because it drastically reduces the number of operations while using constant memory.
