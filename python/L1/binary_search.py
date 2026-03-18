@@ -260,7 +260,7 @@ import time
 
 # this function is for only 1 test case as we are just trying to build logic on how can we make a function that will help us in evaluating test cases 
 
-def evaluate_test_case(func,test): # func:- func we want to test
+def evaluate_test_case(func,test,display=True): # func:- func we want to test and display acts like a switch to control whether we want to see detailed output or not (useful especially for large inputs)
     inputs = test['input'] # we are extracting the inputs that are cards and query from the test and putting it into the variable inputs which will look something like this (inputs = {'cards':[13,11,10,7,4,3,1,0], 'query':7})
     expected = test['output'] # extracting the expected result and putting it into a variable
 
@@ -272,12 +272,16 @@ def evaluate_test_case(func,test): # func:- func we want to test
 
     passed = actual == expected # now we compare our return value of func that is stored in actual with the expected that stores our expected output and then store their comparison result in our variable passed 
 
-    print('Input:',inputs) 
-    print('Expected output:',expected)
-    print("Actual output:",actual)
-    print('Execution time:',round(exec_time,4),'ms') # rounding the exec_time till 4 decimal places as the exec_time can easily have 10-15 decimal places which are not necessary to us 
-    print('Test result:','PASSED' if passed else 'FAILED') # we are using a ternary conditional expression here for writing a if else statement in one line following this syntax (value_if_true if condition else value_if_false)
-    print()
+    # we use display as a control switch so that for normal test cases we can see full details (input, expected, etc.)
+    # but for very large test cases we can turn it off (display=False) to avoid printing huge data and cluttering the output
+
+    if display:
+        print('Input:',inputs) 
+        print('Expected output:',expected)
+        print("Actual output:",actual)
+        print('Execution time:',round(exec_time,4),'ms') # rounding the exec_time till 4 decimal places as the exec_time can easily have 10-15 decimal places which are not necessary to us 
+        print('Test result:','PASSED' if passed else 'FAILED') # we are using a ternary conditional expression here for writing a if else statement in one line following this syntax (value_if_true if condition else value_if_false)
+        print()
 
     return actual,passed,exec_time
 
@@ -294,13 +298,13 @@ def evaluate_test_cases(func,tests):
 
 # 2nd iteration of evaluate_test_cases for additional summary(just a visual effect) functionality
 
-def evaluate_test_cases(func,tests):
+def evaluate_test_cases(func,tests,display=True):
     total = len(tests) # to get total number of tests 
     passed = 0 # counter initialization to calculate passed tests
     failed = 0 # counter initialization to calculate failed tests 
     for i,test in enumerate(tests):
         print(f"Test case {i}")
-        _,test_passed,_ = evaluate_test_case(func,test) # since our evaluate_test_case returns 3 values that are actual,passed and exec_time we only need passed and store it in variable test_passed 
+        _,test_passed,_ = evaluate_test_case(func,test,display=display) # since our evaluate_test_case returns 3 values that are actual,passed and exec_time we only need passed and store it in variable test_passed. here we pass display forward (propagation) so that evaluate_test_case behaves accordingly.if display=True → full details printed and if display=False → only essential output printed (no large input dump)
         if test_passed: # condition for the counter
             passed += 1
         else:
@@ -508,9 +512,11 @@ print()
 # we will write a new helper function called test_location for this which will take cards,query and mid as the arguments(inputs)
 
 
-def test_location(cards,query,mid):
+def test_location(cards,query,mid,debug=True):
     mid_number = cards[mid]
-    print("mid:" ,mid, ",mid_number:",mid_number)
+    # debug acts like a switch to control internal tracing of the algorithm, when debug=True we can see how mid and mid_number are changing in each step, and when debug=False (especially for large inputs) we avoid unnecessary prints in the terminal 
+    if debug:
+        print("mid:" ,mid, ",mid_number:",mid_number)
     if mid_number == query:
         if mid - 1 >= 0 and cards[mid-1] == query: # 1st condition checks whether a previous position exists or not so we don’t go out of bounds, for eg if mid is 6 then mid-1 = 5 >= 0 is true but if mid is 0 then mid-1 = -1 >= 0 is false, and 2nd condition checks the previous position card with query like if cards[mid-1] == query and if the query is 6 and at cards[5] there is also 6 then we return left, but if this condition comes false then it means we have found the first occurrence of query and we return found
             return "left"
@@ -523,12 +529,15 @@ def test_location(cards,query,mid):
     
 # now we again simplify our locate card function
 
-def locate_card(cards,query):
+def locate_card(cards,query,debug=True):
     lo,hi=0, len(cards) - 1
     while lo<=hi:
-        print("lo:",lo, ",hi:",hi)
+        # debug acts as a switch to control whether we want to see how the search space is shrinking step by step
+        # when debug=True we see lo and hi changing, when debug=False (especially for large inputs) we avoid clutter in the terminal output 
+        if debug:
+            print("lo:",lo, ",hi:",hi)
         mid = (lo+hi)//2
-        result = test_location(cards,query,mid) # instead of doing all logic inside locate_card we delegate here 
+        result = test_location(cards,query,mid,debug) # instead of doing all logic inside locate_card we delegate here 
 
         if result == "found":
             return mid
@@ -553,3 +562,45 @@ print()
 # Now we will analyze the complexity of the binary search and identify any inefficiencies if any
 
 # Binary search works by repeatedly dividing the search space into half instead of checking elements one by one like linear search, which allows us to eliminate a large number of elements in each step. Because of this, the number of steps required depends on how many times we can divide the input size (N) by 2 until only one element remains. This idea is what we call a logarithm, where log₂(N) simply means how many times we multiply 2 to reach N, or equivalently, how many times we can divide N by 2 to reach 1. The base 2 comes from the fact that in binary search we always split the data into two halves at every step. Since this number grows very slowly even when N becomes very large, the time complexity of binary search is O(log N). On the other hand, the space complexity is O(1) because we only use a fixed number of variables like lo, hi, and mid, and this does not increase with input size. Therefore, binary search is highly efficient for sorted data because it drastically reduces the number of operations while using constant memory.
+
+
+
+# Comparison between linear and binary search 
+
+def locate_card_linear(cards,query):
+    position = 0
+    while position < len(cards):
+        if cards[position] == query:
+            return position
+        position += 1
+    return -1
+
+large_test = {
+    'input':{
+        'cards': list(range(10000000,0,-1)),
+        'query': 2
+    },
+    'output': 9999998
+}
+
+
+print("-------linear vs binary-------")
+print()
+
+result,passed,runtime = evaluate_test_case(locate_card_linear,large_test,display=False)
+print(f'Result:{result}\nPassed: {passed}\nExecution time: {runtime} ms')
+print()
+
+
+# result,passed,runtime = evaluate_test_case(locate_card,large_test,display=False,)
+# print(f'Result:{result}\nPassed: {passed}\nExecution time: {runtime} ms'))
+# print()
+
+
+result, passed, runtime = evaluate_test_case(lambda cards, query: locate_card(cards, query, debug=False),large_test,display=False) # here we are using lambda which acts as a small temporary function when needed instead of defining a whole new function. It has the basic syntax as lambda arguments : expression and here in our code cards and query are arguments and locate_card(cards,query,debug=False) if we try to understand it with a very simple example if lambda x:x+1 what it will do is take x and add 1 to it and return the result and in our code we already have cards and query but we are adding debug=False as a extra which is needed here so that out terminal dont get cluttered by all the print debug. this line gets executed as first in evaluate_test_case we have inputs in which we have cards and query and in actual we have func(**inputs) so with our lambda function here the actual becomes actual = func(cards,query,debug=False) and when our evaluate_test_case get executed it takes locate_card,large_test,display=False as arguments. display=False is for evaluate_test_case and debug=False is for locate_card
+print(f'Result:{result}\nPassed: {passed}\nExecution time: {runtime} ms')
+print()
+
+
+# When we compared linear search and binary search using a very large input we observed that binary search is significantly faster (in our case over 50,000 times faster). this happens because linear search checks elements one by one so if the input size increases 10 times the number of operations also increases roughly 10 times (O(N)). on the other hand binary search eliminates half of the search space in each step so even if the input size becomes 10 times larger it only needs a few more steps (around log₂(N) growth, for eg from ~24 steps to ~27 steps which is only about 3 extra operations). this is the key difference between O(N) and O(log N), as N grows large the gap between them becomes huge, which is why binary search scales much better and becomes far more efficient compared to linear search.
+
