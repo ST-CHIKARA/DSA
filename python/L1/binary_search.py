@@ -604,3 +604,72 @@ print()
 
 # When we compared linear search and binary search using a very large input we observed that binary search is significantly faster (in our case over 50,000 times faster). this happens because linear search checks elements one by one so if the input size increases 10 times the number of operations also increases roughly 10 times (O(N)). on the other hand binary search eliminates half of the search space in each step so even if the input size becomes 10 times larger it only needs a few more steps (around log₂(N) growth, for eg from ~24 steps to ~27 steps which is only about 3 extra operations). this is the key difference between O(N) and O(log N), as N grows large the gap between them becomes huge, which is why binary search scales much better and becomes far more efficient compared to linear search.
 
+
+
+
+
+
+
+
+
+# Generic binary search
+
+# by this we mean the general strategy behind binary search which is applicable to a variety of problems :-
+
+# 1. come up with a condition to determine whether the answer lie before,after or at a given position
+# 2. retrieve the midpoint and middle element of the list 
+# 3. if its the answer return the midpoint as the answer
+# 4. if it lies before it repeat the search with the 1st half of the list 
+# 5. if it lies after the midpoint repeat the search with the 2nd half of the list 
+
+# Generic code
+
+def binary_search(lo,hi,condition): # new addition (condition) which will be a function 
+    while lo<=hi:
+        mid = (lo + hi) // 2
+        result = condition(mid) # instead of writing the logic of comparison we delegate that to another func called condition. Binary search dont know what cards,query,duplicates etc are it just asks condition like hey i am at mid what should i do now and based on the answer we navigate our list whether ans is found at the mid position or we have to go left or right to search 
+        if result == 'found':
+            return mid
+        elif result == 'left':
+            hi = mid - 1
+        else:
+            lo = mid + 1
+    return -1
+
+def locate_card(cards,query):
+    def condition(mid): # this is called function closure (a closure in python is a nested function that remembers and has access to the variables from its enclosing(outer func)). Now the question arises why we did this :- we defined the condition inside because we need it to access cards and query but we dont want to pass them everytime 
+        if cards[mid] == query:
+            if mid > 0 and cards[mid-1] == query:
+                return 'left'
+            else:
+                return 'found'
+        elif cards[mid] < query: # answer must be on left where bigger numbers are
+            return 'left'
+        else: # cards[mid]>query
+            return 'right' # answer must be on right where smaller numbers are
+    return binary_search(0,len(cards) - 1, condition) # binary search calculates mid --> then calls condition , condition uses cards,query and mid and returns found, left or right then again binary adjusts the search range when needed and repeat till the query is found or not.
+    # here we learnt a new concept in programming called a HIGHER ORDER FUNCTION. A higher order function is a function that **either** takes another function an argument or returns a function as its result. Here in our binary_search example binary_search is a higher order function that takes condition as a argument (emphasis on **either**). i will add an example of a higher order function that returns a function as its result after the results.
+
+
+print("----GENERIC BINARY SEARCH TEST RESULTS----")
+print()
+
+evaluate_test_cases(locate_card,tests)
+print()
+
+# Example of a HIGHER ORDER FUNCTION that returns another function as its result
+
+def multiplier(n): # higher order function
+    def multiply(x):
+        return x*n
+    return multiply # returns this (further shown in examples below)
+
+double = multiplier(2)
+triple = multiplier(3)
+
+# so in double, when we call multiplier(2) it returns a function multiply that remembers the value of n as 2, and the same happens in triple where n is 3. now when we do :-
+
+print(double(5)) # this will print 10 because inside double is x * 2 and here x is 5 so 5*2 =10
+print(triple(5)) # this will give us 15 because inside triple is x * 3 and here x is 5 so 5*3=15
+
+# All comments are there for personal understanding and can be bit imprecise in technical terms but right now understanding is the priority instead of totally technical and precise language.
