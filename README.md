@@ -1,6 +1,6 @@
 # DSA
 
-This repo contains my learning journey with Data structures and algorithms 
+This repository documents my journey learning Data Structures and Algorithms.
 
 ---------
 
