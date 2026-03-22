@@ -656,3 +656,4 @@ print(double(5))  # this will print 10 because inside double is x * 2 and here x
 print(triple(5))  # this will give us 15 because inside triple is x * 3 and here x is 5 so 5*3=15
 
 # All comments are there for personal understanding and can be bit imprecise in technical terms but right now understanding is the priority instead of totally technical and precise language.
+
