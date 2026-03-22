@@ -1,13 +1,13 @@
 # The course starts with a question:- Alice has some cards with numbers written on them. She arranges the cards in decreasing order, and lays them out face down in a sequence on a table. She challenges Bob to pick out the card containing a given number by turning over as few cards as possible. Write a function to help Bob locate the card. # visualize 7 cards with only ? on them laying on the table.
 
-# WHY SHOULD ONE LEARN DSA
+                   # WHY SHOULD ONE LEARN DSA
 
 # 1. it helps you to think about a problem systematically and solve it systematically step by step
 # 2. while solving the problems you envision different inputs, outputs, edge cases for the programs which makes it a comprehensive way of solving a problem
 # 3. when you understand a problem and try to solve it step by step it helps you understand the problem in a better way and it helps you communicate that to others clearly
 # 4. when you understand a problem you can code its solution easily
 
-# A SYSTEMATIC STRATEGY TO SOLVE PROBLEMS IS AS FOLLOWS:-
+         # A SYSTEMATIC STRATEGY TO SOLVE PROBLEMS IS AS FOLLOWS:-
 
 # 1. state the problem clearly in your own words and identify the input and output formats
 # 2. try to come up with some examples of inputs and outputs and try to cover all edge cases of them meaning how many inputs and outputs are there of every type
@@ -16,7 +16,7 @@
 # 5. analyze the algorithm's complexity and identify inefficiencies if any
 # 6. apply the right technique to overcome the inefficiency and then repeat steps 3-6
 
-# ===============================================================================================
+#===============================================================================================
 
 # SOLUTION
 
@@ -40,6 +40,10 @@
 # name your function and parameters appropriately like written below the function name locate_card properly describes on its own what we are doing and parameter names cards and query themselves represent what they are
 
 
+import time
+
+
+
 def locate_card(cards, query):
     pass
 
@@ -56,9 +60,7 @@ output = 3
 
 result = locate_card(cards, query)
 
-print(
-    result == output
-)  # will return False as this was just a crude way to understand things as we have not yet implemented our function
+print(result == output) # will return False as this was just a crude way to understand things as we have not yet implemented our function
 
 # now that we saw a single test case and tested it (crudely) its not enough, we need multiple test cases so we will represent our test cases as dictionaries to make it easier to test them once we complete our function for example the above test can be represented as follows
 
@@ -197,57 +199,44 @@ def locate_card(cards, query):
 
         # this was applicable if the query is in cards, if the case is opposite that means the query is not in the cards we check if we have reached the end of list by doing
 
-        if position == len(
-            cards
-        ):  # we reach here when the upper block of code have exhausted its indexes and as we are incrementing the position when we exhaust our index the next value comes here as we exit out of the upper loop and we compare that is the position == length of our list and if that is true we return -1 and that represents that:-
+        if position == len(cards): # we reach here when the upper block of code have exhausted its indexes and as we are incrementing the position when we exhaust our index the next value comes here as we exit out of the upper loop and we compare that is the position == length of our list and if that is true we return -1 and that represents that:-
             return -1  # return -1 when we didnt find the query
 
 
-print(
-    locate_card(test["input"]["cards"], test["input"]["query"])
-)  # what this line does is something called accessing the nested data structure and since we are working with a dictionary its called nested dictionary access. as our function needs 2 arguments namely cards and query and we have our test case structure already mapped out previously in form of nested dictionaries when we write test['input']['cards'] it is like pulling out values out of a box test is the main box inside it is input so we open the input box input has 2 keys cards and query so firstly we open cards box and take out its value and feed it to the function now the 1st argument called cards have a value and our function can access it, now the next test['input']['query'] also behaves the same way we open test inside we see input and inside that we see query we take out that value and feed it to the function. now our function have both the arguments it needs to execute
-print(
-    locate_card(**test["input"])
-)  # we can write the above nested dict accessing like this way like we wrote earlier way above in the starting what ** does is that it unpacks the dictionary into keyword arguments like they are in the nested structure as inside input there is cards and query and python converts this locate_card(**test['input']) into this locate_card(cards=[13,11,10,7,4,3,1,0], query=7) just like we want
+print(locate_card(test["input"]["cards"], test["input"]["query"]))
+    # what this line does is something called accessing the nested data structure and since we are working with a dictionary its called nested dictionary access. as our function needs 2 arguments namely cards and query and we have our test case structure already mapped out previously in form of nested dictionaries when we write test['input']['cards'] it is like pulling out values out of a box test is the main box inside it is input so we open the input box input has 2 keys cards and query so firstly we open cards box and take out its value and feed it to the function now the 1st argument called cards have a value and our function can access it, now the next test['input']['query'] also behaves the same way we open test inside we see input and inside that we see query we take out that value and feed it to the function. now our function have both the arguments it needs to execute
+
+print(locate_card(**test["input"]))
+    # we can write the above nested dict accessing like this way like we wrote earlier way above in the starting what ** does is that it unpacks the dictionary into keyword arguments like they are in the nested structure as inside input there is cards and query and python converts this locate_card(**test['input']) into this locate_card(cards=[13,11,10,7,4,3,1,0], query=7) just like we want
+
 print(locate_card(**test["input"]) == test["output"])
 print()
 
 
 # now that we have our solution we will add HELPER UTILITIES FUNCTIONS to help us test our test cases
 
-from ctypes.wintypes import POINT
-import time
 
 # this function is for only 1 test case as we are just trying to build logic on how can we make a function that will help us in evaluating test cases
 
 
-def evaluate_test_case(
-    func, test, display=True
-):  # func:- func we want to test and display acts like a switch to control whether we want to see detailed output or not (useful especially for large inputs)
-    inputs = test[
-        "input"
-    ]  # we are extracting the inputs that are cards and query from the test and putting it into the variable inputs which will look something like this (inputs = {'cards':[13,11,10,7,4,3,1,0], 'query':7})
-    expected = test[
-        "output"
-    ]  # extracting the expected result and putting it into a variable
+def evaluate_test_case(func,test,display=True,):
+    # func:- func we want to test and display acts like a switch to control whether we want to see detailed output or not (useful especially for large inputs)
 
-    start = (
-        time.time()
-    )  # returns the current system time as a float measured in sec we are doing this because we want to measure the executing time of our func
-    actual = func(
-        **inputs
-    )  # this becomes func(unpacking of inputs which we talked about earlier)
-    end = (
-        time.time()
-    )  # the timer that got started when we did start stops here and now we have a time frame from start to end of the executing
+    inputs = test["input"]
+        # we are extracting the inputs that are cards and query from the test and putting it into the variable inputs which will look something like this (inputs = {'cards':[13,11,10,7,4,3,1,0], 'query':7})
+    
+    expected = test["output"] 
+        # extracting the expected result and putting it into a variable
 
-    exec_time = (
-        end - start
-    ) * 1000  # since end and start are in seconds we convert them to milliseconds by multiplying their difference by 1000 because 1 sec = 1000 ms (for eg 0.005sec * 1000 = 5 ms)
+    start = (time.time()) # returns the current system time as a float measured in sec we are doing this because we want to measure the executing time of our func
+    actual = func(**inputs) # this becomes func(unpacking of inputs which we talked about earlier)
+    end = (time.time())  # the timer that got started when we did start stops here and now we have a time frame from start to end of the executing
 
-    passed = (
-        actual == expected
-    )  # now we compare our return value of func that is stored in actual with the expected that stores our expected output and then store their comparison result in our variable passed
+    exec_time = (end- start) * 1000
+        # since end and start are in seconds we convert them to milliseconds by multiplying their difference by 1000 because 1 sec = 1000 ms (for eg 0.005sec * 1000 = 5 ms)
+    
+
+    passed = (actual == expected) # now we compare our return value of func that is stored in actual with the expected that stores our expected output and then store their comparison result in our variable passed
 
     # we use display as a control switch so that for normal test cases we can see full details (input, expected, etc.)
     # but for very large test cases we can turn it off (display=False) to avoid printing huge data and cluttering the output
@@ -256,12 +245,9 @@ def evaluate_test_case(
         print("Input:", inputs)
         print("Expected output:", expected)
         print("Actual output:", actual)
-        print(
-            "Execution time:", round(exec_time, 4), "ms"
-        )  # rounding the exec_time till 4 decimal places as the exec_time can easily have 10-15 decimal places which are not necessary to us
-        print(
-            "Test result:", "PASSED" if passed else "FAILED"
-        )  # we are using a ternary conditional expression here for writing a if else statement in one line following this syntax (value_if_true if condition else value_if_false)
+        print("Execution time:", round(exec_time, 4), "ms")  # rounding the exec_time till 4 decimal places as the exec_time can easily have 10-15 decimal places which are not necessary to us
+        print("Test result:","PASSED" if passed else "FAILED")
+            # we are using a ternary conditional expression here for writing a if else statement in one line following this syntax (value_if_true if condition else value_if_false)
         print()
 
     return actual, passed, exec_time
@@ -275,12 +261,8 @@ print()
 
 
 def evaluate_test_cases(func, tests):
-    for i, test in enumerate(
-        tests
-    ):  # here we are using the enumerate() func because when we use it, it adds an index infront of each item of an iterable which in our case is tests list having multiple test cases and its returns the index and item as tuple (index,item)
-        print(
-            f"Test case {i}"
-        )  # will output Test case 1, Test case 2.......... Test case 8
+    for i, test in enumerate(tests): # here we are using the enumerate() func because when we use it, it adds an index infront of each item of an iterable which in our case is tests list having multiple test cases and its returns the index and item as tuple (index,item)
+        print( f"Test case {i}")  # will output Test case 1, Test case 2.......... Test case 8
         evaluate_test_case(func, test)
 
 
@@ -293,9 +275,9 @@ def evaluate_test_cases(func, tests, display=True):
     failed = 0  # counter initialization to calculate failed tests
     for i, test in enumerate(tests):
         print(f"Test case {i}")
-        _, test_passed, _ = evaluate_test_case(
-            func, test, display=display
-        )  # since our evaluate_test_case returns 3 values that are actual,passed and exec_time we only need passed and store it in variable test_passed. here we pass display forward (propagation) so that evaluate_test_case behaves accordingly.if display=True → full details printed and if display=False → only essential output printed (no large input dump)
+        _, test_passed, _ = evaluate_test_case(func,test,display=display)
+            # since our evaluate_test_case returns 3 values that are actual,passed and exec_time we only need passed and store it in variable test_passed. here we pass display forward (propagation) so that evaluate_test_case behaves accordingly.if display=True → full details printed and if display=False → only essential output printed (no large input dump)
+        
         if test_passed:  # condition for the counter
             passed += 1
         else:
@@ -336,9 +318,7 @@ query6 = tests[6]["input"]["query"]
 
 def locate_card(cards, query):
     position = 0
-    while position < len(
-        cards
-    ):  # we are checking whether we have reached the end of list before accessing an element from it in this case of position is 0 and len of list is also 0 this condition and code block related to it wont execute and -1 will be returned
+    while position < len(cards): # we are checking whether we have reached the end of list before accessing an element from it in this case of position is 0 and len of list is also 0 this condition and code block related to it wont execute and -1 will be returned
         if cards[position] == query:
             return position
         position += 1
@@ -473,29 +453,24 @@ print()
 
 
 def locate_card(cards, query):
-    lo, hi = (
-        0,
-        len(cards) - 1,
-    )  # here 2 variables are made where lo represents the left boundary of the current search space that is 0 and hi represents the right boundary of the current search space that will be calculated by len(cards) - 1 and the value that we get from it will be stored in hi
-    while (
-        lo <= hi
-    ):  # this condition simply means while we have a valid search space continue searching and by a valid search space we mean is that till lo is either smaller or equal to the hi we have a valid search space for eg if lo is 0 and hi is 6 that means we have the whole search space then lo becomes 1 and search space becomes 5 our search space got smaller and with each iteration it becomes smaller
+    lo, hi = 0,len(cards) - 1,
+        # here 2 variables are made where lo represents the left boundary of the current search space that is 0 and hi represents the right boundary of the current search space that will be calculated by len(cards) - 1 and the value that we get from it will be stored in hi
+    
+    while (lo <= hi): # this condition simply means while we have a valid search space continue searching and by a valid search space we mean is that till lo is either smaller or equal to the hi we have a valid search space for eg if lo is 0 and hi is 6 that means we have the whole search space then lo becomes 1 and search space becomes 5 our search space got smaller and with each iteration it becomes smaller
         mid = (lo + hi) // 2  # to get the middle element of the list
         mid_number = cards[mid]  # to access the element
         print("lo:", lo, ",hi:", hi, ",mid:", mid, ",mid_number:", mid_number)
 
         if mid_number == query:
             return mid
-        elif (
-            mid_number < query
-        ):  # if mid_number is less than query for eg in our previous example mid position was 3 and it have the mid_number 4 in the list and query was 6 this is the code that shows us that scenario. so 4<6
-            hi = (
-                mid - 1
-            )  # now what we are doing here is we are invalidating the second half of the list by shrinking the valid search space as in our example mid = 3 now hi becomes 3- 1 = 2 and our working space shifts from 0-6 to 0-2, we just discarded the second half of the list and will now work with first half. after the execution of this condition the loop goes back to while lo <=hi which becomes 0<=2 then we find middle again 0+2//2 = 1 , then mid_number = cards[1] = 7 then this block turns out false and we move to next conditional statement.
+        elif (mid_number < query): # if mid_number is less than query for eg in our previous example mid position was 3 and it have the mid_number 4 in the list and query was 6 this is the code that shows us that scenario. so 4<6
+            hi = (mid- 1)
+                # now what we are doing here is we are invalidating the second half of the list by shrinking the valid search space as in our example mid = 3 now hi becomes 3- 1 = 2 and our working space shifts from 0-6 to 0-2, we just discarded the second half of the list and will now work with first half. after the execution of this condition the loop goes back to while lo <=hi which becomes 0<=2 then we find middle again 0+2//2 = 1 , then mid_number = cards[1] = 7 then this block turns out false and we move to next conditional statement.
+            
         elif mid_number > query:  # 7 > 6 from our example turns out true for this
-            lo = (
-                mid + 1
-            )  # it becomes lo = 1+1 = 2 and now lo is 2 and hi is 2 # now next iteration of the loop begins while 2<=2 since its true we move forward to finding mid 2+2//2 = 2 now next line becomes mid_number = cards[2] which gives us 6 now when in the conditional statement it is checked if mid_number == query and now its 6 ==6 we get the value of mid which is 2 returned and hence we have solved our problem in the 3rd iteration and solved our problem with less steps.
+            lo = (mid+ 1)
+                # it becomes lo = 1+1 = 2 and now lo is 2 and hi is 2 # now next iteration of the loop begins while 2<=2 since its true we move forward to finding mid 2+2//2 = 2 now next line becomes mid_number = cards[2] which gives us 6 now when in the conditional statement it is checked if mid_number == query and now its 6 ==6 we get the value of mid which is 2 returned and hence we have solved our problem in the 3rd iteration and solved our problem with less steps.
+            
 
     return -1  # if query not there return -1
 
@@ -521,15 +496,13 @@ def test_location(cards, query, mid, debug=True):
     if debug:
         print("mid:", mid, ",mid_number:", mid_number)
     if mid_number == query:
-        if (
-            mid - 1 >= 0 and cards[mid - 1] == query
-        ):  # 1st condition checks whether a previous position exists or not so we don’t go out of bounds, for eg if mid is 6 then mid-1 = 5 >= 0 is true but if mid is 0 then mid-1 = -1 >= 0 is false, and 2nd condition checks the previous position card with query like if cards[mid-1] == query and if the query is 6 and at cards[5] there is also 6 then we return left, but if this condition comes false then it means we have found the first occurrence of query and we return found
+        if (mid - 1 >= 0 and cards[mid - 1] == query):
+            # 1st condition checks whether a previous position exists or not so we don’t go out of bounds, for eg if mid is 6 then mid-1 = 5 >= 0 is true but if mid is 0 then mid-1 = -1 >= 0 is false, and 2nd condition checks the previous position card with query like if cards[mid-1] == query and if the query is 6 and at cards[5] there is also 6 then we return left, but if this condition comes false then it means we have found the first occurrence of query and we return found
+        
             return "left"
         else:
             return "found"
-    elif (
-        mid_number < query
-    ):  # if card < query we return left because if query is 8 and mid_number is 6 as the list is sorted we get to know that we need to move left as left side will have bigger numbers
+    elif (mid_number < query): # if card < query we return left because if query is 8 and mid_number is 6 as the list is sorted we get to know that we need to move left as left side will have bigger numbers
         return "left"
     else:  # its like saying else: mid_number>query
         return "right"
@@ -546,9 +519,7 @@ def locate_card(cards, query, debug=True):
         if debug:
             print("lo:", lo, ",hi:", hi)
         mid = (lo + hi) // 2
-        result = test_location(
-            cards, query, mid, debug
-        )  # instead of doing all logic inside locate_card we delegate here
+        result = test_location(cards, query, mid, debug) # instead of doing all logic inside locate_card we delegate here
 
         if result == "found":
             return mid
@@ -595,9 +566,7 @@ large_test = {
 print("-------linear vs binary-------")
 print()
 
-result, passed, runtime = evaluate_test_case(
-    locate_card_linear, large_test, display=False
-)
+result, passed, runtime = evaluate_test_case(locate_card_linear, large_test, display=False)
 print(f"Result:{result}\nPassed: {passed}\nExecution time: {runtime} ms")
 print()
 
@@ -610,8 +579,9 @@ print()
 result, passed, runtime = evaluate_test_case(
     lambda cards, query: locate_card(cards, query, debug=False),
     large_test,
-    display=False,
-)  # here we are using lambda which acts as a small temporary function when needed instead of defining a whole new function. It has the basic syntax as lambda arguments : expression and here in our code cards and query are arguments and locate_card(cards,query,debug=False) if we try to understand it with a very simple example if lambda x:x+1 what it will do is take x and add 1 to it and return the result and in our code we already have cards and query but we are adding debug=False as a extra which is needed here so that out terminal dont get cluttered by all the print debug. this line gets executed as first in evaluate_test_case we have inputs in which we have cards and query and in actual we have func(**inputs) so with our lambda function here the actual becomes actual = func(cards,query,debug=False) and when our evaluate_test_case get executed it takes locate_card,large_test,display=False as arguments. display=False is for evaluate_test_case and debug=False is for locate_card
+    display=False)
+    # here we are using lambda which acts as a small temporary function when needed instead of defining a whole new function. It has the basic syntax as lambda arguments : expression and here in our code cards and query are arguments and locate_card(cards,query,debug=False) if we try to understand it with a very simple example if lambda x:x+1 what it will do is take x and add 1 to it and return the result and in our code we already have cards and query but we are adding debug=False as a extra which is needed here so that out terminal dont get cluttered by all the print debug. this line gets executed as first in evaluate_test_case we have inputs in which we have cards and query and in actual we have func(**inputs) so with our lambda function here the actual becomes actual = func(cards,query,debug=False) and when our evaluate_test_case get executed it takes locate_card,large_test,display=False as arguments. display=False is for evaluate_test_case and debug=False is for locate_card
+
 print(f"Result:{result}\nPassed: {passed}\nExecution time: {runtime} ms")
 print()
 
@@ -632,14 +602,10 @@ print()
 # Generic code
 
 
-def binary_search(
-    lo, hi, condition
-):  # new addition (condition) which will be a function
+def binary_search(lo, hi, condition): # new addition (condition) which will be a function
     while lo <= hi:
         mid = (lo + hi) // 2
-        result = condition(
-            mid
-        )  # instead of writing the logic of comparison we delegate that to another func called condition. Binary search dont know what cards,query,duplicates etc are it just asks condition like hey i am at mid what should i do now and based on the answer we navigate our list whether ans is found at the mid position or we have to go left or right to search
+        result = condition(mid) # instead of writing the logic of comparison we delegate that to another func called condition. Binary search dont know what cards,query,duplicates etc are it just asks condition like hey i am at mid what should i do now and based on the answer we navigate our list whether ans is found at the mid position or we have to go left or right to search
         if result == "found":
             return mid
         elif result == "left":
@@ -650,9 +616,7 @@ def binary_search(
 
 
 def locate_card(cards, query):
-    def condition(
-        mid,
-    ):  # this is called function closure (a closure in python is a nested function that remembers and has access to the variables from its enclosing(outer func)). Now the question arises why we did this :- we defined the condition inside because we need it to access cards and query but we dont want to pass them everytime
+    def condition(mid):  # this is called function closure (a closure in python is a nested function that remembers and has access to the variables from its enclosing(outer func)). Now the question arises why we did this :- we defined the condition inside because we need it to access cards and query but we dont want to pass them everytime
         if cards[mid] == query:
             if mid > 0 and cards[mid - 1] == query:
                 return "left"
@@ -663,9 +627,7 @@ def locate_card(cards, query):
         else:  # cards[mid]>query
             return "right"  # answer must be on right where smaller numbers are
 
-    return binary_search(
-        0, len(cards) - 1, condition
-    )  # binary search calculates mid --> then calls condition , condition uses cards,query and mid and returns found, left or right then again binary adjusts the search range when needed and repeat till the query is found or not.
+    return binary_search(0, len(cards) - 1, condition) # binary search calculates mid --> then calls condition , condition uses cards,query and mid and returns found, left or right then again binary adjusts the search range when needed and repeat till the query is found or not.
     # here we learnt a new concept in programming called a HIGHER ORDER FUNCTION. A higher order function is a function that **either** takes another function an argument or returns a function as its result. Here in our binary_search example binary_search is a higher order function that takes condition as a argument (emphasis on **either**). i will add an example of a higher order function that returns a function as its result after the results.
 
 
@@ -690,11 +652,7 @@ triple = multiplier(3)
 
 # so in double, when we call multiplier(2) it returns a function multiply that remembers the value of n as 2, and the same happens in triple where n is 3. now when we do :-
 
-print(
-    double(5)
-)  # this will print 10 because inside double is x * 2 and here x is 5 so 5*2 =10
-print(
-    triple(5)
-)  # this will give us 15 because inside triple is x * 3 and here x is 5 so 5*3=15
+print(double(5))  # this will print 10 because inside double is x * 2 and here x is 5 so 5*2 =10
+print(triple(5))  # this will give us 15 because inside triple is x * 3 and here x is 5 so 5*3=15
 
 # All comments are there for personal understanding and can be bit imprecise in technical terms but right now understanding is the priority instead of totally technical and precise language.
