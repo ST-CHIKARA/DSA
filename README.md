@@ -17,3 +17,6 @@ Because of that, I created this repository to break down concepts in my own way 
     - [Practice questions](python/L1/practice_questions.py)
     - [Linked List](python/L1/linked_list.py)
 
+- L2:
+    - [Binary search trees](python/L2/binary_search_trees.py)
+
