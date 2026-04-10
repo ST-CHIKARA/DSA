@@ -332,7 +332,11 @@ print()
 # Now we will write a function tree_to_tuple which will convert a binary tree into a tuple representing the same tree so this function is the reverse of what we did above.
 
 def tree_to_tuple(node):
-    pass
+        if node is None:
+            return None
+        if node.left is None and node.right is None:
+            return node.key
+        return TreeNode.to_tuple(node.left),  node.key, TreeNode.to_tuple(node.right)
 
 
 
@@ -525,3 +529,306 @@ print()
 # call 2 happens for tree_size(2) and here also 2nd return statement gets executed that makes the line = return 1 + tree_size(None) + tree_size(None) and then this pauses and call 2.1 and 2.2 happens which return 0,0 as the node is None and that makes our return expression of call 2 as 1 + 0 + 0 = 1 and this gets returned back to call 1 which makes call 1 line = return 1 + 1 + tree_size(3)
 
 # now call 3 happens for tree_size(3) again its 2nd return statement gets executed which makes it return 1 + tree_size(None) + tree_size(None) which then pauses here and call 3.1 and 3.2 happens and returns 0,0 that makes our call 3 return expression as 1 + 0 + 0 = 1 which gets returned to call 1 and that makes its return expression as 1 + 1 + 1 = 3 as the final answer 
+
+
+# Now we will combine all functions that we have written so far in class TreeNode
+
+
+class TreeNode:
+    def __init__(self,key):
+        self.key = key
+        self.right = None
+        self.left = None
+    
+    def height(self):
+        if self is None:
+            return 0
+        return 1 + max(TreeNode.height(self.left),TreeNode.height(self.right))
+    
+    def size(self):
+        if self is None:
+            return 0
+        return 1 + TreeNode.size(self.left) + TreeNode.size(self.right)
+    
+    def traverse_inorder(self):
+        if self is None:
+            return []
+        return (TreeNode.traverse_inorder(self.left) + [self.key] + TreeNode.traverse_inorder(self.right))
+    
+    def traverse_preorder(self):
+        if self is None:
+            return []
+        return ([self.key] + TreeNode.traverse_preorder(self.left) + TreeNode.traverse_preorder(self.right))
+    
+    def traverse_postorder(self):
+        if self is None:
+            return []
+        return (TreeNode.traverse_postorder(self.left) + TreeNode.traverse_postorder(self.right) + [self.key])
+    
+    def display_keys(self, space='\t', level=0):
+        # If the node is empty
+        if self is None:
+            print(space*level + '∅')
+            return   
+
+        # If the node is a leaf 
+        if self.left is None and self.right is None:
+            print(space*level + str(self.key))
+            return
+
+        # If the node has children
+        display_keys(self.right, space, level+1)
+        print(space*level + str(self.key))
+        display_keys(self.left,space, level+1)
+
+    def to_tuple(self):
+        if self is None:
+            return None
+        if self.left is None and self.right is None:
+            return self.key
+        return TreeNode.to_tuple(self.left),  self.key, TreeNode.to_tuple(self.right)
+    
+    def __str__(self):
+        return f"Binary Tree:{self.to_tuple()}"
+    
+    def __repr__(self):
+        return f"Binary Tree:{self.to_tuple()}"
+
+    def parse_tuple(data):
+        if data is None:
+            node = None
+        elif isinstance(data, tuple) and len(data) == 3:
+            node = TreeNode(data[1])
+            node.left = TreeNode.parse_tuple(data[0])
+            node.right = TreeNode.parse_tuple(data[2])
+        else:
+            node = TreeNode(data)
+        return node
+    
+tree2 = TreeNode.parse_tuple(tree_tuple)
+print(tree2)
+print()
+
+print(tree2.display_keys())
+print('\n')
+print('\n')
+
+print(tree2.size())
+print()
+print(tree2.height())
+print()
+
+print(tree2.traverse_inorder())
+print()
+print(tree2.traverse_preorder())
+print()
+print(tree2.traverse_postorder())
+print()
+
+print(tree2.to_tuple())
+print()
+
+
+
+
+# Binary Search Tree
+
+#  A binary search tree is a binary tree where every node follows a special ordering rule that makes search faster 
+
+# A general binary tree just have the structure rule that each node have a left and right child that's it there is no way for us to apply the binary search logic on a tree that can have random nodes everywhere so a general binary tree is not good for applying the search logic
+
+# That's where the binary search tree comes in place with some additional rules that for every node all values in the left subtree must be smaller and all values in the right subtree must be larger and this must be true for every single node
+
+bst_tree0 = """
+        50
+       / \
+      30  70
+     / \ / \
+    20 40 60 80
+"""
+
+# This property of binary search tree makes operations like insertion, update, search and sorted traversal easy and efficient than binary trees.
+
+# QUESTION: Write a function to check if a binary tree is a binary search tree (BST).
+
+# QUESTION: Write a function to find the maximum key in a binary tree.
+
+# QUESTION: Write a function to find the minimum key in a binary tree.
+
+# These are some questions we need to answer to understand about binary search trees and we will be doing that by writing just one function that encapsulates all of the answers
+
+def remove_none(nums):
+    return [x for x in nums if x is not None]
+# This helper function is used for removing None values from a given argument because when we calculate max and min None interferes with the logic of finding the min value so we remove it to get accurate data
+
+def is_bst(node): # Base case when tree is empty and we designate it as BST having no min and max values 
+    if node is None:
+        return True, None, None
+    
+    is_bst_l, min_l, max_l = is_bst(node.left) # ask left subtree are you a bst and what are your min and max values 
+    is_bst_r, min_r, max_r = is_bst(node.right) # ask right subtree are you a bst and what are your min and max values 
+
+    is_bst_node = (is_bst_l and is_bst_r and (max_l is None or node.key > max_l) and (min_r is None or node.key < min_r))
+
+    # This is to check the current node with certain conditions which are:-
+
+    # 1. is_bst_l and is_bst_r :- we are checking if both subtrees are BSTs
+
+    # 2. max_l is None or node.key > max_l :- we are checking either max value of the left subtree is None or the node.key that we are currently on is greater than the max value of the left subtree and to put it simply we are checking that the current node must be greater than everything in the left subtree
+
+    # 3. min_r is None or node.key < min_r :- we are checking that the current node must be smaller than everything in right subtree
+
+    min_key = min(remove_none([min_l,node.key,min_r])) # to get smallest value of the whole subtree
+    max_key = max(remove_none([max_l,node.key,max_r])) # to get the largest value in the whole subtree
+
+    return is_bst_node, min_key, max_key
+
+print(is_bst(tree2))
+print('\n')
+print('\n')
+
+tree4 = TreeNode.parse_tuple((('aakash', 'biraj', 'hema')  , 'jadhesh', ('siddhant', 'sonaksh', 'viru')))
+
+print(display_keys(tree4))
+print('\n')
+print('\n')
+
+print(is_bst(tree4))
+print()
+
+
+# Storing key value pairs in binary search trees 
+
+class BSTNode():
+    def __init__(self,key,value=None):
+        self.key = key
+        self.value = value
+        self.left = None
+        self.right = None
+        self.parent = None
+
+# Now we will create a BST with usernames from before as keys and user objects as values 
+
+bst_tree1 = """
+        jadhesh
+       /       \
+    biraj     sonaksh
+    /   \      /    \
+aakash hema siddhant viru
+"""
+
+tree5= BSTNode(jadhesh.username,jadhesh)
+print(tree5.key,tree5.value)
+print()
+
+tree5.left = BSTNode(biraj.username,biraj)
+tree5.right = BSTNode(sonaksh.username,sonaksh)
+
+print(tree5.left.key,tree5.left.value)
+print()
+
+print(tree5.right.key,tree5.right.value)
+print()
+
+tree5.left.left = BSTNode(aakash.username,aakash)
+tree5.left.right = BSTNode(hema.username,hema)
+
+print(tree5.left.left.key,tree5.left.left.value)
+print()
+
+print(tree5.left.right.key,tree5.left.right.value)
+print()
+
+tree5.right.left = BSTNode(siddhant.username,siddhant)
+tree5.right.right = BSTNode(viru.username,viru)
+
+print(tree5.right.left.key,tree5.right.left.value)
+print()
+
+print(tree5.right.right.key,tree5.right.right.value)
+print('\n')
+print('\n')
+
+
+display_keys(tree5)
+print('\n')
+print('\n')
+
+print(tree_height(tree5))
+print(tree_size(tree5))
+print()
+
+# Insertion into an BST
+
+# Write a function to insert a new node in the BST
+
+# We can use the BST property to perform insertion effectively
+
+# 1. Starting from the root node we compare the key to be inserted with the current nodes key
+
+# 2. If the key is smaller, we recursively insert it into the left subtree if its present or attach it as left child if no left subtree exists 
+
+# 3. If the key is larger, we recursively insert it into the right subtree if it exists or attach it as right child if no right subtree exists 
+
+
+def insert(node,key,value):
+    if node is None: # when we find there is no node
+        node = BSTNode(key,value) # we make a new node
+    
+    elif key < node.key: # condition to check if the new key is smaller than root node, and if yes we go left of it
+        node.left = insert(node.left,key,value) # as insert takes 3 arguments we are giving it a node(node.left), a key(key) and a value(value)
+        node.left.parent = node
+
+    elif key > node.key:
+        node.right = insert(node.right,key,value)
+        node.right.parent = node
+
+    return node
+
+chirag = User('chirag', 'Chirag parswan', 'chirag@example.com')
+
+
+tree5 = insert(tree5,chirag.username,chirag)
+
+display_keys(tree5)
+print('\n')
+print('\n')
+
+
+tanya = User('tanya', 'tanya gulati', 'tanya@example.com')
+
+tree5 = insert(tree5,tanya.username,tanya)
+
+display_keys(tree5)
+print('\n')
+print('\n')
+
+print(tree_height(tree5))
+print('\n')
+
+
+# Order of insertion of nodes changes the structure of the resulting tree as we will see in the example below 
+
+
+tree6 = insert(None, aakash.username, aakash)
+insert(tree6, biraj.username, biraj)
+insert(tree6, hema.username, hema)
+insert(tree6, jadhesh.username, jadhesh)
+insert(tree6, siddhant.username, siddhant)
+insert(tree6, viru.username, viru)
+
+
+display_keys(tree6)
+print('\n')
+print('\n')
+
+print(tree_height(tree6))
+print('\n')
+
+
+
+# Tree6 came out as skewed and unbalanced tree and that is a problem.
+
+# skewed and unbalanced trees are bad because height stops growing logarithmically that means slowly instead it grows linearly as in our example tree5 and tree6 are basically similar but height of tree5 is 4 and height of tree6 is 6 and nodes are also 6 so height increases linearly here.
+
+# And due to this the length traversed by insert became equal to height of tree in worst case scenario and that makes the time complexity of insertion O(N) in our skewed and unbalanced binary search trees instead of O(log N) in case of a balanced search tree 
