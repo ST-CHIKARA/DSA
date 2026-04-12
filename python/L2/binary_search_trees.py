@@ -832,3 +832,71 @@ print('\n')
 # skewed and unbalanced trees are bad because height stops growing logarithmically that means slowly instead it grows linearly as in our example tree5 and tree6 are basically similar but height of tree5 is 4 and height of tree6 is 6 and nodes are also 6 so height increases linearly here.
 
 # And due to this the length traversed by insert became equal to height of tree in worst case scenario and that makes the time complexity of insertion O(N) in our skewed and unbalanced binary search trees instead of O(log N) in case of a balanced search tree 
+
+
+
+# Finding a node in BST
+
+# Write a function to find the value associated with a given key in the BST
+
+def find(node,key):
+    if node is None:
+        return None
+    if key == node.key:
+        return node
+    if key < node.key:
+        return find(node.left,key)
+    if key > node.key:
+        return find(node.right,key)
+    
+node = find(tree5, "chirag")
+
+if node is not None:
+    print(node.value.name)
+else:
+    print("User not found")
+
+node = find(tree5, "chirag")
+
+if node:
+    print((node.key, node.value))
+else:
+    print("User not found")
+
+print()
+
+
+# Updating a value in BST
+
+# Write a function to update the value associated with a given key within a BST
+
+def update(node, key, value):
+    target = find(node, key)
+    if target is not None:
+        target.value = value
+
+update(tree5, 'chirag',User('chirag','chirag pandit','chirag@example.com'))
+
+node = find(tree5, "chirag")
+
+if node:
+    print((node.key, node.value))
+else:
+    print("User not found")
+
+print()
+
+
+# List the nodes 
+
+# write a function to retrieve all key value pairs stored in BST in sorted order of keys
+
+def list_all(node):
+    if node is None:
+        return []
+    return list_all(node.left) + [(node.key, node.value)] + list_all(node.right)
+
+print(list_all(tree5))
+
+
+
