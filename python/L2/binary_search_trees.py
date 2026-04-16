@@ -884,7 +884,8 @@ if node:
 else:
     print("User not found")
 
-print()
+print('\n')
+print('\n')
 
 
 # List the nodes 
@@ -897,6 +898,87 @@ def list_all(node):
     return list_all(node.left) + [(node.key, node.value)] + list_all(node.right)
 
 print(list_all(tree5))
+print('\n')
+print('\n')
 
 
 
+
+
+# Balanced Binary trees
+
+# Write a function to determine if a binary tree is balanced 
+
+def is_balanced(node):
+    if node is None:
+        return True, 0
+    balanced_l, height_l = is_balanced(node.left) # ask the left subtree are you balanced and what is your height 
+    balanced_r, height_r = is_balanced(node.right)
+    balanced = balanced_l and balanced_r and abs(height_l - height_r) <=1 # checking the current node and this means the node is balanced if the left and right subtrees are balanced and difference of height of left and right is less than or equal to 1 as more height will signify that te tree is skewed on one side 
+    height = 1 + max(height_l, height_r)
+    return balanced, height
+
+
+print(is_balanced(tree5))
+print()
+print(is_balanced(tree6))
+print('\n')
+print('\n')
+
+
+
+
+# Balanced binary search trees 
+
+# Write a function to create a balanced BST from a sorted list/array of key value pairs 
+
+def make_balanced_bst(data,lo=0,hi=None,parent=None): # we are building a balanced binary tree from a sorted list where middle element becomes the root and left and right sides becomes left and right subtrees respectively 
+    if hi is None: # setting up hi 
+        hi = len(data) - 1
+    if lo > hi: # base case when no elements are left
+        return None
+    
+    mid = (lo+hi) // 2 # getting mid
+    key,value = data[mid] # getting key and value of mid element 
+
+    root = BSTNode(key,value) # creating a node 
+    root.parent = parent
+    root.left = make_balanced_bst(data,lo,mid-1,root) # building left subtree
+    root.right = make_balanced_bst(data,mid+1,hi,root) # building right subtree
+
+    return root
+
+data = [(user.username, user) for user in users]
+
+
+tree7 = make_balanced_bst(data)
+display_keys(tree7)
+
+print('\n')
+print('\n')
+
+
+# Balancing an unbalanced binary tree
+
+# We will first perform an inorder traversal, then create a balanced BST using the function defined earlier.
+
+def balanced_bst(node):
+    return make_balanced_bst(list_all(node))
+
+tree8 = None
+for user in users:
+    tree8 = insert(tree8, user.username, user)
+
+display_keys(tree8)
+print('\n')
+print('\n')
+
+
+tree9 = balanced_bst(tree8)
+
+display_keys(tree9)
+print('\n')
+print('\n')
+
+
+# After every insertion, we can rebalance the BST to keep it from becoming skewed, but this comes with a tradeoff: insertion itself is fast (O(log N) in a balanced tree), but rebalancing requires converting the tree to a sorted list and rebuilding it, which takes O(N), making each such insertion effectively O(N). However, the benefit is that future operations like find and update remain very fast at O(log N), because the tree stays short and balanced. The key improvement between O(N) and O(log N) is massive in practice—for example, with 100 million elements, a linear search might take up to 100 million steps, whereas a balanced BST reduces this to about 26 steps (log₂N), which is thousands to millions of times faster. Because balancing every single time is expensive, a practical strategy is to rebalance occasionally (e.g., after many insertions or periodically), so most insertions remain fast while still keeping the tree efficient overall.
