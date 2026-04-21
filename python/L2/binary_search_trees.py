@@ -982,3 +982,237 @@ print('\n')
 
 
 # After every insertion, we can rebalance the BST to keep it from becoming skewed, but this comes with a tradeoff: insertion itself is fast (O(log N) in a balanced tree), but rebalancing requires converting the tree to a sorted list and rebuilding it, which takes O(N), making each such insertion effectively O(N). However, the benefit is that future operations like find and update remain very fast at O(log N), because the tree stays short and balanced. The key improvement between O(N) and O(log N) is massive in practice—for example, with 100 million elements, a linear search might take up to 100 million steps, whereas a balanced BST reduces this to about 26 steps (log₂N), which is thousands to millions of times faster. Because balancing every single time is expensive, a practical strategy is to rebalance occasionally (e.g., after many insertions or periodically), so most insertions remain fast while still keeping the tree efficient overall.
+
+
+
+
+
+# Now that we have laid the foundation to our original question we will came back to it again 
+
+# Q:- As a senior backend engineer at Jovian, you are tasked with developing a fast in-memory data structure to manage profile information (username, name and email) for 100 million users. It should allow the following operations to be performed efficiently:
+
+# 1. Insert the profile information for a new user.
+# 2. Find the profile information of a user, given their username
+# 3. Update the profile information of a user, given their username
+# 4. List all the users of the platform, sorted by username
+
+# we will make a generic class called TreeMap which will support all the operations specified in the question 
+
+class TreeMap():
+    def __init__(self):
+        self.root = None # initial starting point which is initially None
+
+    def __setitem__(self,key,value): # Insert and update operation, runs when we do treemap['aakash'] = aakash . This is written like this because when we do it like this python converts it to treemap(self).__setitem__('aakash',aakash) which mimics the python dict which is d = {} -> d['key'] = value ad=nd our treemap written below also follows the same. It makes data structure feel natural and intuitive
+        node = find(self.root,key) # check if key exists 
+        if not node:
+            self.root = insert(self.root,key,value) # insert
+            self.root = balanced_bst(self.root) # rebalance the tree
+        else:
+            update(self.root,key,value) # if key present just update it 
+
+    def __getitem__(self,key): # search operation
+        node = find(self.root,key)
+        return node.value if node else None # if found return the value otherwise None
+    
+    def __iter__(self): # looping
+        return (x for x in list_all(self.root)) # for each item in the class object / instance treemap written below 
+    
+    def __len__(self): # size of tree, meaning number of nodes present 
+        return tree_size(self.root)
+    
+    def display(self): # for displaying the bst
+        return display_keys(self.root)
+    
+
+treemap = TreeMap()
+treemap['aakash'] = aakash
+treemap['jadhesh'] = jadhesh
+treemap['sonaksh'] = sonaksh
+treemap['siddhant'] = siddhant
+treemap['biraj'] = biraj
+treemap['hema'] = hema
+treemap['viru'] = viru
+treemap.display()
+print('\n')
+print('\n')
+
+
+print(treemap['jadhesh'])
+print()
+
+
+print(len(treemap)) # when we write like this and use python len() which is a built in function in python that asks for a object for its size and internally it does treemap.__len__ and use treesize as the function to gather the data to count nodes
+print('\n')
+print('\n')
+
+print(list(treemap)) # when we write like this and use python list() which is a built in constructor function of list type internally it is asking for a iterator which we defined in our class, __iter__ so when we write list(treemap) internally python does is treemap.__iter__ and uses list_all to get user values from the tree and make a list out of it
+print('\n')
+print('\n')
+
+
+
+
+
+# Self balancing binary trees and AVL trees
+
+# A normal binary search tree works great only if it stays balanced but as we know if we are inserting in a sorted order the tree becomes skewed and unbalanced either to left or right. eg :- 1 → 2 → 3 → 4 → 5
+
+tree_repr3 = """
+1
+ \
+  2
+   \
+    3
+     \
+      4
+       \
+        5
+"""
+
+# And when this happens the operation especially insertion becomes O(N) as height = no of steps / no of nodes. 
+
+# what we want is the tree where height dont increases linearly and the tree is balanced and operations remain O(logN) logarithmic. 
+
+tree_repr4 = """"
+      3
+     / \
+    2   4
+   /
+  1
+"""
+# And another thing that comes to mind is that we cant be doing full rebalancing of the tree after each insertion as that also makes the operation O(N). So another another that can be applied to this problem is that we can apply the logic of self balancing binary search trees or to be exact AVL Tree (Georgy Adelson-Velsky and Landis' tree, named after the inventors).
+
+# An AVL Tree is a self balancing binary search tree where for every node the height difference between left and right subtree is at most 1. And if any time the height difference which we will call balancing factor becomes more than 1 (either -1 or +1) a rebalancing is done at that node 
+
+# balancing factor = height(left_subtree) - height(right_subtree)
+
+# | Balance Factor | Meaning              |
+# | -------------- | -------------------- |
+# |  0             | perfectly balanced   |
+# | +1             | slightly left heavy  |
+# | -1             | slightly right heavy |
+# | +2 or -2       | unbalanced           |
+
+
+# In AVL trees, after inserting a node using normal BST insertion, we go back up the path to the root. At each ancestor, we update its height and compute its balance factor.
+
+# As soon as we detect the first unbalanced node (balance factor becomes +2 or -2), we perform the required rotation's on that node.
+
+# After this rotation, the subtree height is usually restored to its pre-insertion value, so ancestors above this node generally do not become unbalanced. Therefore, only one balancing operation (single or double rotation) is needed in most cases
+
+
+def tree_height(node):
+    if node is None:
+        return -1
+    return 1 + max(tree_height(node.left), tree_height(node.right))
+
+
+# There are 4 rotation logic and cases 
+
+# 1. Left-Left 
+
+tree_repr5 = """ # left skewed tree 
+                 # left_height = 2
+                 # right_height = -1 (-1 signifies no node empty)   
+                 # balance factor = at node 5 = +2
+
+    5            # height(5) -> 1 + (1,-1) -> 1 + 1 -> 2 -> BF = 1 - (-1) = 2 
+   /
+  3              # height(3) -> 1 + (0,-1) -> 1 + (0) -> 1 -> BF = 0 - (-1) = 1
+ /               
+2                # height(2) -> 1 + (-1,-1) -> 1 + (-1) -> 0 -> BF = -1 - (-1) = 0
+"""
+
+# node 5 is where the unbalancing first happened so we will rotate it right at 5 to make it a balanced tree 
+
+# y = 5.left
+# 5.left = None
+# y.right = 5
+
+
+# 2. Right-Right 
+
+tree_repr6 = """ # right skewed tree 
+                 # left_height = -1
+                 # right_height = 2  
+                 # balance factor = at node 1 = -2
+
+1                # height(1) -> 1 + (-1,1) -> 1 + 1 -> 2 -> BF = -1 - (1) = -2
+ \
+  3              # height(3) -> 1 + (-1,0) -> 1 + (0) -> 1 -> BF = -1 - (0) = -1
+   \
+    5            # height(5) -> 1 + (-1,-1) -> 1 + (-1) -> 0 -> BF = -1 - (-1) = 0 
+"""
+
+# node 1 is where the unbalancing first happened so we will rotate it left at 1 to make it a balanced tree 
+
+# y = 1.right
+# 1.right = None
+# y.left = 1
+
+
+# 3. Left-Right 
+
+tree_repr7 = """ # zig-zag (left-right)
+                 # left_height = 2
+                 # right_height = -1  
+                 # balance factor = at node 5 = +2
+
+    5            # height(5) -> 1 + (1,-1) -> 1 + 1 -> 2 -> BF = 1 - (-1) = 2
+   /
+  3              # height(3) -> 1 + (-1,0) -> 1 + (0) -> 1 -> BF = -1 - (0) = -1
+   \
+    4            # height(4) -> 1 + (-1,-1) -> 1 + (-1) -> 0 -> BF = -1 - (-1) = 0
+"""
+
+# node 5 is unbalanced but structure is zig-zag
+# so we fix child first, then root
+
+# STEP 1 → LEFT rotation at node 3
+
+# y = 3.right
+# 3.right = None
+# y.left = 3
+# 5.left = y
+
+
+# STEP 2 → RIGHT rotation at node 5
+
+# y = 5.left
+# 5.left = None
+# y.right = 5
+
+
+# 4. Right-Left 
+
+tree_repr8 = """ # zig-zag (right-left)
+                 # left_height = -1
+                 # right_height = 2  
+                 # balance factor = at node 1 = -2
+
+1                # height(1) -> 1 + (-1,1) -> 1 + 1 -> 2 -> BF = -1 - (1) = -2
+ \
+  5              # height(5) -> 1 + (0,-1) -> 1 + (0) -> 1 -> BF = 0 - (-1) = 1
+ /
+4                # height(4) -> 1 + (-1,-1) -> 1 + (-1) -> 0 -> BF = -1 - (-1) = 0
+"""
+
+# node 1 is unbalanced but structure is zig-zag
+# so again fix child first, then root
+
+# STEP 1 → RIGHT rotation at node 5
+
+# y = 5.left
+# 5.left = None
+# y.right = 5
+# 1.right = y
+
+
+# STEP 2 → LEFT rotation at node 1
+
+# y = 1.right
+# 1.right = None
+# y.left = 1
+
+
+
