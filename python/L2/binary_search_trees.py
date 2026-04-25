@@ -1216,3 +1216,449 @@ tree_repr8 = """ # zig-zag (right-left)
 
 
 
+
+# Implementation of self balancing trees on few examples :-
+
+# when we use our insert function here to make a tree we will get a Left leaning skewed tree
+
+tree10 = None
+tree10 = insert(tree10,5,5)
+tree10 = insert(tree10,3,3)
+tree10 = insert(tree10,2,2)
+
+display_keys(tree10)
+print('\n')
+print('\n')
+
+# Now i will write another insert function called insert_ll that takes the concept of self balancing trees and applies it. After making the function we will make tree10 again as tree10_sb 
+
+# This was written because there was a bug that was interfering with the code where a node was being injected here which had a string instead of an integer we are using.
+
+# def insert_ll(node,key,value):
+#     print("NODE KEY AT ENTRY:", None if node is None else node.key)
+    
+#     if node is None:
+#         return BSTNode(key,value)
+    
+#     print("Comparing:", key, type(key), "with", node.key, type(node.key))
+
+#     if key < node.key:
+#         node.left = insert_ll(node.left,key,value)
+#         node.left.parent = node
+#     else:
+#         node.right = insert_ll(node.right,key,value)
+#         node.right.parent = node
+
+#     node.height = 1 + max(tree_height(node.left),tree_height(node.right))
+
+#     bf = tree_height(node.left) - tree_height(node.right)
+
+#     if bf > 1 and key < node.left.key:
+#         y = node.left
+#         node.left = None
+#         y.right = node
+#         return y
+
+#     return node
+
+
+# tree10_sb = None
+# print("tree10_sb BEFORE insert:", tree10_sb)
+# tree10_sb = insert_ll(tree10_sb,5,5)
+# tree10_sb = insert_ll(tree10_sb,3,3)
+# tree10_sb = insert_ll(tree10_sb,2,2)
+
+# display_keys(tree10_sb)
+# print('\n')
+# print('\n')  
+
+
+
+def insert_ll(node,key,value):
+
+    if node is None:
+        return BSTNode(key,value)
+    
+    if key < node.key:
+        node.left = insert_ll(node.left,key,value)
+        node.left.parent = node
+    else:
+        node.right = insert_ll(node.right,key,value)
+        node.right.parent = node
+
+    node.height = 1 + max(tree_height(node.left),tree_height(node.right))
+
+    bf = tree_height(node.left) - tree_height(node.right)
+
+    if bf > 1 and key < node.left.key:
+        y = node.left
+        node.left = None
+        y.right = node
+        return y
+
+    return node
+
+
+tree10_sb = None
+tree10_sb = insert_ll(tree10_sb,5,5)
+tree10_sb = insert_ll(tree10_sb,3,3)
+tree10_sb = insert_ll(tree10_sb,2,2)
+
+display_keys(tree10_sb)
+print('\n')
+print('\n')  
+
+
+
+# This code was written with the help of ai to add scaffolding to understand how data is flowing inside the function but i will also trace the data on the notebook when revising it again. 
+
+# def insert_ll(node, key, value, depth=0):
+#     indent = "  " * depth  # visual indentation
+
+#     print(f"{indent}➡️ Enter insert_ll(node={None if node is None else node.key}, key={key})")
+
+#     # 1. Base case
+#     if node is None:
+#         print(f"{indent}🌱 Creating node {key}")
+#         return BSTNode(key, value)
+
+#     # 2. Traverse
+#     if key < node.key:
+#         print(f"{indent}⬅️ Go LEFT from {node.key}")
+#         node.left = insert_ll(node.left, key, value, depth + 1)
+#         node.left.parent = node
+#     else:
+#         print(f"{indent}➡️ Go RIGHT from {node.key}")
+#         node.right = insert_ll(node.right, key, value, depth + 1)
+#         node.right.parent = node
+
+#     # 3. Update height
+#     left_h = tree_height(node.left)
+#     right_h = tree_height(node.right)
+#     node.height = 1 + max(left_h, right_h)
+
+#     print(f"{indent}📏 Node {node.key} height updated to {node.height}")
+
+#     # 4. Balance factor
+#     bf = left_h - right_h
+#     print(f"{indent}⚖️ BF at {node.key} = {bf}")
+
+#     # 5. LL Rotation
+#     if bf > 1 and key < node.left.key:
+#         print(f"{indent}🔄 LL ROTATION at {node.key}")
+
+#         y = node.left
+#         node.left = y.right
+#         y.right = node
+
+#         print(f"{indent}✅ New subtree root = {y.key}")
+#         return y
+
+#     print(f"{indent}⬆️ Returning node {node.key}")
+#     return node
+
+# tree10_sb = None
+# print("tree10_sb BEFORE insert:", tree10_sb)
+# tree10_sb = insert_ll(tree10_sb,5,5)
+# tree10_sb = insert_ll(tree10_sb,3,3)
+# tree10_sb = insert_ll(tree10_sb,2,2)
+
+# print('\n')
+# print('\n') 
+
+# display_keys(tree10_sb)
+# print('\n')
+# print('\n') 
+
+
+def insert_rr(node,key,value):
+
+    if node is None:
+        return BSTNode(key,value)
+    
+    if key < node.key:
+        node.left = insert_rr(node.left, key, value)
+        node.left.parent = node
+    else:
+        node.right = insert_rr(node.right, key, value)
+        node.right.parent = node
+
+    node.height = 1 + max(tree_height(node.left),tree_height(node.right))
+
+    bf = tree_height(node.left) - tree_height(node.right)
+
+    if bf < -1 and key > node.right.key:
+        y = node.right
+        node.right = None
+        y.left = node
+        return y
+    
+    return node
+
+
+tree11 = None
+tree11 = insert(tree11,1,1)
+tree11 = insert(tree11,3,3)
+tree11 = insert(tree11,5,5)
+
+display_keys(tree11)
+print('\n')
+print('\n')
+
+tree11_sb = None
+tree11_sb = insert_rr(tree11_sb,1,1)
+tree11_sb = insert_rr(tree11_sb,3,3)
+tree11_sb = insert_rr(tree11_sb,5,5)
+
+display_keys(tree11_sb)
+print('\n')
+print('\n')
+
+
+
+def insert_lr(node, key, value):
+
+    if node is None:
+        return BSTNode(key, value)
+    
+    if key < node.key:
+        node.left = insert_lr(node.left, key, value)
+        node.left.parent = node
+    else:
+        node.right = insert_lr(node.right, key, value)
+        node.right.parent = node
+
+    node.height = 1 + max(tree_height(node.left), tree_height(node.right))
+
+    bf = tree_height(node.left) - tree_height(node.right)
+
+    
+    if bf > 1 and key > node.left.key:
+        # step 1: LEFT rotation at node.left
+        y = node.left.right
+        node.left.right = None
+        y.left = node.left
+        node.left = y
+
+        # step 2: RIGHT rotation at node
+        y = node.left
+        node.left = None
+        y.right = node
+        return y
+
+    return node
+
+
+
+tree12 = None
+tree12 = insert(tree12,5,5)
+tree12 = insert(tree12,3,3)
+tree12 = insert(tree12,4,4)
+
+
+display_keys(tree12)
+print("\n")
+print("\n")
+
+
+tree12_sb = None
+tree12_sb = insert_lr(tree12_sb,5,5)
+tree12_sb = insert_lr(tree12_sb,3,3)
+tree12_sb = insert_lr(tree12_sb,4,4)
+
+
+display_keys(tree12_sb)
+print("\n")
+print("\n")
+
+
+
+
+def insert_rl(node, key, value):
+
+    if node is None:
+        return BSTNode(key, value)
+    
+    if key < node.key:
+        node.left = insert_rl(node.left, key, value)
+        node.left.parent = node
+    else:
+        node.right = insert_rl(node.right, key, value)
+        node.right.parent = node
+
+    node.height = 1 + max(tree_height(node.left), tree_height(node.right))
+
+    bf = tree_height(node.left) - tree_height(node.right)
+
+    # RL case
+    if bf < -1 and key < node.right.key:
+        # step 1: RIGHT rotation at node.right
+        y = node.right.left
+        node.right.left = None
+        y.right = node.right
+        node.right = y
+
+        # step 2: LEFT rotation at node
+        y = node.right
+        node.right = None
+        y.left = node
+        return y
+
+    return node
+
+
+tree13 = None
+tree13 = insert(tree13,2,2)
+tree13 = insert(tree13,5,5)
+tree13 = insert(tree13,4,4)
+
+display_keys(tree13)
+print('\n')
+print('\n')
+
+tree13_sb = None
+tree13_sb = insert_rl(tree13_sb,2,2)
+tree13_sb = insert_rl(tree13_sb,5,5)
+tree13_sb = insert_rl(tree13_sb,4,4)
+
+
+display_keys(tree13_sb)
+print('\n')
+print('\n')
+
+
+def insert_avl(node, key, value):
+
+    
+    if node is None:
+        return BSTNode(key, value)
+    
+    if key < node.key:
+        node.left = insert_avl(node.left, key, value)
+        node.left.parent = node
+    else:
+        node.right = insert_avl(node.right, key, value)
+        node.right.parent = node
+
+    
+    node.height = 1 + max(tree_height(node.left),tree_height(node.right))
+
+    
+    bf = tree_height(node.left) - tree_height(node.right)
+
+    # -------------------------
+    # LL CASE
+    if bf > 1 and key < node.left.key:
+        y = node.left
+        node.left = y.right
+        y.right = node
+        return y
+
+    # RR CASE
+    if bf < -1 and key > node.right.key:
+        y = node.right
+        node.right = y.left
+        y.left = node
+        return y
+
+    # LR CASE
+    if bf > 1 and key > node.left.key:
+        # step 1: LEFT rotate child
+        y = node.left.right
+        node.left.right = y.left
+        y.left = node.left
+        node.left = y
+
+        # step 2: RIGHT rotate root
+        y = node.left
+        node.left = y.right
+        y.right = node
+        return y
+
+    # RL CASE
+    if bf < -1 and key < node.right.key:
+        # step 1: RIGHT rotate child
+        y = node.right.left
+        node.right.left = y.right
+        y.right = node.right
+        node.right = y
+
+        # step 2: LEFT rotate root
+        y = node.right
+        node.right = y.left
+        y.left = node
+        return y
+
+    return node
+
+
+
+# 1. EXPONENTIAL vs LOGARITHMIC (CORE IDEA)
+
+# Exponential Growth: value grows very fast
+# e.g. 2^1, 2^2, 2^3, ... → 2, 4, 8, 16, 
+
+
+# Logarithmic Growth: growth is very slow
+# e.g. log₂(2), log₂(4), log₂(8) → 1, 2, 3
+
+
+# Relationship: Exponential and logarithmic are inverses
+# If: y = 2^x
+# Then: x = log₂(y)
+
+
+# 2. CONNECTION TO TREES
+
+# In balanced trees: number of nodes grows exponentially with height. Therefore: height grows logarithmically with number of nodes. For example: nodes ≈ 2^height → height ≈ log₂(nodes)
+
+
+# 3. WHY AVL TREES ARE IMPORTANT
+
+# Normal BST: can become skewed depending on input with worst-case height = O(n)
+
+# AVL Tree: maintains balance at every node and ensures height remains = O(log n)
+
+
+
+# 4. INSERTION LOGIC (VERY IMPORTANT FLOW)
+
+# Step 1: Insert node using BST rules
+# Step 2 (while returning upward): - update height, - compute balance factor, - detect imbalance, - apply rotation
+
+# 5. FOUR ROTATION CASES
+
+
+# (A) LL (Left-Left)
+# condition: BF > 1 and key < node.left.key
+# fix: RIGHT rotation
+
+
+# (B) RR (Right-Right)
+# condition: BF < -1 and key > node.right.key
+# fix: LEFT rotation
+
+
+# (C) LR (Left-Right)
+# condition: BF > 1 and key > node.left.key
+# fix: 1. LEFT rotate child , 2. RIGHT rotate root
+
+
+# (D) RL (Right-Left)
+# condition: BF < -1 and key < node.right.key
+# fix: 1. RIGHT rotate child , 2. LEFT rotate root
+
+# 6. KEY INSIGHT
+
+# BST ensures: correct ordering of nodes
+
+# AVL ensures: correct structure (balance)
+
+# Rotations: do NOT break BST property, only rearrange structure
+
+
+# 7. TIME COMPLEXITY
+
+# Because AVL maintains balance: height remains = O(log n) Therefore: search remains  = O(log n), insert remains = O(log n) and delete remains  = O(log n)
+
+
