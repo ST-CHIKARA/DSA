@@ -24,7 +24,7 @@ for name in phone_numbers:
 print()
 
 # Dictionaries in Python are implemented using Hash Tables. A hash table uses a list/array to store the key-value pairs, and uses a hashing function to determine the index for storing or retrieving the data associated with a given key.
-# what this simply means is that when we give python a key it converts it into a hash and give it a hash address and when we want to access that key it directly jumps to that hash address
+# what this simply means is that when we give python a key it converts it into a hash and give it a hash address(in our case here the index of the list) and when we want to access that key it directly jumps to that hash address
 
 
 # Our objective now is to implement a hash table class which supports following operations 
@@ -51,9 +51,9 @@ class HashTable:
         pass
 
 
-MAX_HASH_TABLE_SIZE = 4096
+MAX_HASH_TABLE_SIZE = 4096 # Its just a variable that stores the value 4096
 
-data_list = [None] * MAX_HASH_TABLE_SIZE
+data_list = [None] * MAX_HASH_TABLE_SIZE # we are making a list that have 4096 indexes with values = None (None * 4096)
 
 print(len(data_list) == 4096)
 print(data_list[99] == None )
@@ -72,45 +72,47 @@ print()
 # 3. Add the numbers for each character to obtain the hash for the entire string
 # 4. Take the remainder of the result with the size of the data list
 
-def get_index(data_list,a_string):
-    result = 0
+def get_index(data_list,a_string): # Get_index takes 2 arguments our data_list that we made above and the key (a_string) that we want to store like 'Aakash' for example 
+    result = 0 # Counter that holds the total numeric value(unicode) of all the letters in the name (key)
 
-    for a_character in a_string:
-        a_number = ord(a_character)
-        result += a_number
+    for a_character in a_string: # for loop to loop over each character of the name(key)
+        a_number = ord(a_character) # what this does is that takes our single character (a_character) and uses ord() function to return back its unicode which is a universal code assigned to every character, symbol and emoji in every language
+        result += a_number # we take that unicode number and add it to our counter 
 
-    list_index = result % len(data_list)
-    return list_index
+    list_index = result % len(data_list) # Here what we are doing is that using modulus operator (%) which is used to get a remainder of the division between the total result of the key we converted to unicode and the len of our data_list which is fixed 4096.
+    # We are doing this because the index we are trying to get of the key we gave as the argument must be between 0 and 4095 and we dont accidentally get a index higher than the total length of the list.
+    return list_index # we return the index 
 
-print(get_index(data_list, '') == 0)
+print(get_index(data_list, '') == 0) # check if an empty string gives the index == 0 since there are no characters to sum and the default value of the result = 0
 print()
 
-get_index(data_list, 'Aakash') == 585
+print(get_index(data_list, 'Aakash') == 585) # To check if the name Aakash hashes to index 585
 print()
 
-print(get_index(data_list, 'Don O Leary')) 
+print(get_index(data_list, 'Don O Leary')) # To get the index of Don O Leary
 print()
 
-key, value = 'Aakash', '7878787878'
+key, value = 'Aakash', '7878787878' # Assigning key,value pair
 
-idx = get_index(data_list, key)
+idx = get_index(data_list, key) # running the key we just defined through the function to get its index value
 print(idx)
 print()
 
-print(data_list[idx] == None)
+print(data_list[idx] == None) # To check if the spot at the index that we got from above is empty(None)
 print()
 
-data_list[idx] = (key, value)
+data_list[idx] = (key, value) # We got to index we got from above and in the empty space we just checked we replace the empty space with the tuple (key,value) pair which will be 'Aakash', '7878787878' at index 585
 
-key, value = data_list[idx]
+key, value = data_list[idx] # We are unpacking the tuple we just stored by doing to the index and saving their values in the variables key,value
 print(value)
 print()
 
-print(data_list[idx] == None)
+print(data_list[idx] == None) # Now we are checking if the index spot where we added our tuple is empty or not
 print()
 
-pairs = [kv[0] for kv in data_list if kv is not None]
-
+pairs = [kv[0] for kv in data_list if kv is not None] # Using list comprehension we are trying to get the keys of the data we stored in our list(hash map) wherever it is unless the list is empty. 
+# 1. So kv[0] means the first value in the tuple that got added which means the key. # 2. kv is the loop variable that stores the tuple when looping through the data_list
+# 3. It returns the key if the list is not empty and if it is, it just returns a empty list as the output  
 print(pairs)
 print()
 
@@ -146,7 +148,7 @@ class BasicHashTable:
         
     def update(self,key,value):
             # Find index
-            idx = get_index(data_list,key)
+            idx = get_index(self.data_list,key)
 
             # Replace with new value 
 
