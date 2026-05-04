@@ -176,3 +176,131 @@ print()
 print(table.list_all())   
 print()
 
+
+
+# Handling collision with linear probing 
+
+table.insert('stop',10)
+table.insert('post',20)
+print(table.find('stop'))
+print()
+
+# So what we are seeing here is something called collision, we inserted 2 key value pairs namely 'stop',10 & 'post',20. (A dumb reminder for the future me 10 and 20 are just random values in the key value pair). 
+
+# Here in our example stop and post are made up of the same 4 words and that makes their unicode = 
+# 1. s(115) + t(116) + o(111) + p(112) = 454 
+# 2. p(112) + o(111) + s(115) + t(116) = 454
+
+# And when we do of 454 % 4096, we get 454 which means the index 454 
+
+# Now when the first insertion happens, python calculates the hash index as 454 and moves to it. Then it checks it, as that comes as None we insert our key value pair there 'stop',10
+
+# Then we do 2nd insert of 'post',20 and since the index of post is also the same python again goes to the same index and overwrites on the existing data and now at index it becomes 'post',20 and when we do print(table.find('stop')) it just returns us the value of the index as 20 not 10 as it was overwritten. 
+
+# To rectify this we will use a technique called linear probing 
+
+# How linear probing is like this :- 
+
+# 1. While inserting a new key value pair if the target index for the key is occupied by another key, we try the next index, followed by the next and so on till me reach the next empty location.
+
+# 2. while finding the key value pair we follow the same strategy, but instead of searching for an empty location, we look for a location which contains a key value pair with the matching key 
+
+# 3. We also apply this technique while updating a key value pair where we again look for a location which contains a key value pair with matching key and update its value.
+
+def get_valid_index(data_list,key):
+     # We will start with the index that get returned by our get_index function
+     idx = get_index(data_list,key)
+
+     while True:
+          # We peek into the drawer at that index 
+          kv = data_list[idx]
+
+          if kv is None: # If the index we just got is None
+               return idx # we return that index to insert our key value pair here
+          
+          stored_key, value = kv # If the index is not None, we unpack it to see what's inside 
+
+          # If our stored key matches our key(argument), we have found our target and we return that index so that we can update and retrieve that value 
+
+          if stored_key == key:
+               return idx
+          
+          # If the above condition becomes True it means the spot is occupied by someone else. This is a collision and now we move to the next index (Linear Probe).
+
+          idx += 1
+
+          # And if we hit the end of the list we go back to index 0
+
+          if idx == len(data_list):
+               idx = 0
+
+
+print(get_index(data_list,'stop'))
+print(get_index(data_list,'post'))
+print()
+
+          
+data_list1 = [None] * MAX_HASH_TABLE_SIZE
+idx_stop = get_index(data_list1, 'stop')
+data_list1[idx_stop] = ('stop', 10)
+idx_post = get_valid_index(data_list1, 'post')
+print(f"Index for 'stop': {idx_stop}")
+print(f"Index for 'post': {idx_post}")
+print()
+
+# Hash Table with Linear probing
+
+class ProbingHashTable:
+    def __init__(self, max_size=MAX_HASH_TABLE_SIZE):
+        self.data_list = [None] * max_size
+     
+    def insert(self, key, value):
+        # 1. Find the index for the key using get_valid_index 
+        idx = get_valid_index(self.data_list, key)
+        
+        # 2. Store the key-value pair as a tuple at that index
+        self.data_list[idx] = (key, value)
+    
+    def find(self, key):
+        # 1. Find the index for the key using get_valid_index
+        idx = get_valid_index(self.data_list, key)
+        
+        # 2. Retrieve the data stored at that index
+        kv = self.data_list[idx]
+        
+        # 3. Return the value if found, else return None
+        if kv is None:
+            return None
+        else:
+            stored_key, value = kv
+            return value
+    
+    def update(self, key, value):
+        # 1. Find the exact index where the key already lives
+        idx = get_valid_index(self.data_list, key)
+        
+        # 2. Overwrite that spot with the new key-value pair
+        self.data_list[idx] = (key, value)
+
+    def list_all(self):
+        return [kv[0] for kv in self.data_list if kv is not None]
+    
+
+probing_table = ProbingHashTable()
+
+probing_table.insert('stop',454)
+print(probing_table.find('stop') == 454)
+print()
+
+probing_table.insert('post',455)
+print(probing_table.find('post') == 455)
+print()
+
+probing_table.insert('hot',1)
+print(probing_table.find('hot'))
+probing_table.insert('hot',3)
+print(probing_table.find('hot'))
+print()
+
+print(probing_table.list_all())
+print()
