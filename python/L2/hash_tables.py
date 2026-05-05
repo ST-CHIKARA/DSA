@@ -304,3 +304,71 @@ print()
 
 print(probing_table.list_all())
 print()
+
+
+# Python dictionaries using hash tables
+
+class HashTable:
+    def __init__(self, max_size= MAX_HASH_TABLE_SIZE):
+        self.max_size = max_size
+        self.data = [None] * max_size
+
+    def get_valid_index(self,key):
+        idx = hash(key) % self.max_size
+
+        while True:
+            kv = self.data[idx]
+            # If kv is empty or if we have found our key this index is valid
+            if kv is None or kv[0] == key:
+                return idx 
+            
+            # Use of linear probing 
+
+            idx = (idx+1) % self.max_size
+
+    def __getitem__(self,key):
+        idx = self.get_valid_index(key)
+        kv = self.data[idx]
+        return None if kv is None else kv[1]
+    
+    def __setitem__(self,key,value):
+        idx = self.get_valid_index(key)
+        self.data[idx] = (key,value)
+
+    def __iter__(self):
+        return (x for x in self.data if x is not None)
+    
+    def __len__(self):
+        return len([x for x in self])
+    
+    def __repr__(self):
+    # 1. Grab all the (key, value) pairs that aren't None
+    # 2. Format them nicely into "  'key': 'value'" strings
+        pairs = [f"  {repr(k)}: {repr(v)}" for k, v in self]
+    
+    # 3. Join them with newlines and wrap in curly braces
+        return "{\n" + ",\n".join(pairs) + "\n}"
+    
+    def __str__(self):
+        return repr(self)
+    
+table1 = HashTable()
+
+table1['st'] = 9
+table1['sn'] = 26
+
+print(table1)
+print()
+
+print(table1['st'] == 9)
+print()
+
+table1['st'] = 7
+print(table1)
+print()
+
+
+print(hash(42))
+print(hash(64))
+print(hash(1009))
+print(hash(-1)) # We will get -2 as the output for the hash because internally in python -1 mean an error and to rectify this here an internal rule was made that no hash is allowed to be -1 so python nudges the value of hash(-1) to -2 to keep this error free
