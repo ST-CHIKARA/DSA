@@ -21,3 +21,6 @@ Because of that, I created this repository to break down concepts in my own way 
     - [Binary search trees](python/L2/binary_search_trees.py)
     - [Hash tables](python/L2/hash_tables.py)
 
+- L3:
+    - [sorting](python/L3/sorting.py)
+
