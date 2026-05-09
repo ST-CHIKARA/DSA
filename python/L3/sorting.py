@@ -190,7 +190,10 @@ def evaluate_test_cases(func, tests, display=True):
     print(f"TOTAL:{total}, PASSED:{passed}, FAILED:{failed}")
 
 
-results = evaluate_test_cases(bubble_sort,tests[:6])
+results_bubble_sort = evaluate_test_cases(bubble_sort,tests[:6])
+
+print('--------------------------------')
+print('\n')
 
 
 
@@ -209,6 +212,81 @@ results = evaluate_test_cases(bubble_sort,tests[:6])
 # Thus our Time complexity becomes O(n²) . First i will define what is quadratic, in maths quadratic means an polynomial equation or expression where the highest power of a variable is ² . In our case a quadratic time complexity means an algorithm whose execution time grows in proportion to the square of the input size.
 
 # Thats why bubble sort is not used in massive data sets as work increases proportional to ² of input size 
+
+
+# Bubble sort takes the additional space of O(1) because the extra additional memory used is only by our loop variables like _ & i and some temporary space used during comparison but the overall space complexity is O(n) because with increase in input the memory needed to store that input also increases.
+
+
+# Insertion sort 
+
+# 1. Start from the second element in the list because the first element is already considered sorted
+# 2. Pick out the current element we are at
+# 3. Move backward through the sorted portion of the list
+# 4. Keep checking elements until we find where the current element belongs
+# 5. Insert the current element into its correct sorted position
+# 6. Repeat steps 2 to 5 until the whole list is sorted
+
+def insertion_sort(nums):
+    nums = list(nums)
+    for i in range(1, len(nums)): # iterate the whole list and we start from index 1 because in insertion sort first element is already considered sorted
+        cur = nums.pop(i) # we pop out the current element that we want to insert into the sorted portion i.e the starting left of the list. 
+        j = i -1 # start checking from the element just before the current position
+        while j >= 0 and nums[j] > cur: # To move left while elements are greater than current element
+            j = j-1 # keep moving backward through the sorted portion
+        nums.insert(j+1,cur)  # insert current element into its correct sorted position
+    return nums
+
+nums0, output0 = test0['input']['nums'], test0['output']
+
+print('Input:', nums0)
+print('Expected output:', output0)
+result0 = insertion_sort(nums0)
+print('Actual output:', result0)
+print('Match:', result0 == output0)
+
+print('\n')
+
+nums = [5,2,1,4,0,3]
+print(insertion_sort(nums))
+print('\n')
+
+results_insertion_sort = evaluate_test_cases(insertion_sort,tests[:6]) 
+
+print('-------------------------------------')
+print('\n')
+
+
+# Complexity of Insertion sort 
+
+# Insertion sort mainly does 3 main operations
+# 1. comparison   2. backward traversal/searching   3. insertion
+
+# The main idea behind insertion sort is that we treat the left side of the list as already sorted.
+# We pick one element at a time from the unsorted portion and insert it into its correct position in the sorted portion.
+
+# To analyze the time complexity we mainly focus on comparisons and backward traversal because every element may need to move backward through the sorted portion before being inserted.
+
+# The outer loop runs n-1 times because we start from index 1 and assume the first element is already sorted.
+
+# The while loop is where the main work happens.In the best case scenario like [1,2,3,4,5] the current element is already greater than elements before it.So the while loop stops immediately every time.
+# This means only one comparison happens per iteration.Thus in the best case the total work grows linearly with input size.Therefore Best Case Time Complexity = O(n)
+
+# In the worst case scenario like [5,4,3,2,1] every new element has to travel all the way left through the sorted portion.
+
+# Example:
+# 4 compares with 5
+# 3 compares with 5 and 4
+# 2 compares with 5,4 and 3
+
+# This approximately grows like n². Thus Worst Case Time Complexity = O(n²). Average case is also O(n²) because for random lists elements usually move backward partially through the sorted portion.
+
+# Even though insertion sort also has quadratic complexity like bubble sort,it is usually much faster in practice because instead of repeatedly swapping neighboring elements,it directly finds the correct position and inserts the element there.
+
+# Bubble sort slowly moves elements one swap at a time. Insertion sort places elements more intelligently.
+
+# Insertion sort takes additional space of O(1) because the extra memory used is only by helper variables like i, j and cur.
+
+# But overall space complexity is O(n) because memory is still needed to store the input list itself as input size increases.
 
 
 
