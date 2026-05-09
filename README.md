@@ -22,5 +22,5 @@ Because of that, I created this repository to break down concepts in my own way 
     - [Hash tables](python/L2/hash_tables.py)
 
 - L3:
-    - [sorting](python/L3/sorting.py)
+    - [Sorting](python/L3/sorting.py)
 
