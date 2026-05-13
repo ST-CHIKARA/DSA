@@ -290,6 +290,283 @@ print('\n')
 
 
 
+# Ok now we move towards rectifying the inefficiencies we saw in bubble sort of it being O(n²)
+
+# we will try to apply the right technique to rectify the inefficiencies 
+
+# To perform sorting more efficiently we'll apply a strategy called divide and conquer which have the following general steps
+
+# 1. Divide the input in roughly two equal parts
+# 2. recursively solve the problem individually for each of the two parts 
+# 3. Combine the results to solve the problem for the original inputs 
+# 4. Include terminating conditions for small or indivisible inputs
+
+# The name for this solution algo is Merge sort 
+
+# Now we will come up with a solution and state it in plain english 
+
+# 1. If the input list is empty or contains just one element it is already sorted, return it 
+# 2. If not divide the list of numbers in roughly 2 equal parts
+# 3. Sort each part recursively using merge sort algorithm and we get back 2 sorted lists
+# 4. Merge the 2 sorted list to get a single sorted list
+
+
+def merge(left, right):
+
+    merged = []  # empty list to store the final sorted list
+
+    i = 0  # pointer/counter for left list
+    j = 0  # pointer/counter for right list
+
+    # compare elements from both lists until one list finishes/ until elements still remain in the list. Even if elements gets exhausted in one list this statement becomes False
+    while i < len(left) and j < len(right):
+
+        # if current element in left list is smaller
+        if left[i] <= right[j]: # We do this because logic says if 2 lists are already sorted so the smallest element remaining is definitely on the 0 position of i and if this condition gets satisfied 
+
+            merged.append(left[i])  # we add it to empty merged list
+            i += 1  # move left pointer/counter forward from 0 to 1 and we repeat the loop with the next value that counter points to 
+
+        else:
+            # If the if block dont run what we do is we take smallest element of the right sorted list and append it to the merged final list as that is the smallest element in this case 
+            merged.append(right[j])  # add the smaller right element
+            j += 1  # move right pointer/counter forward
+    # Eventually a list gets exhausted and the upper while loop gets False so thats why to add the remaining elements we make another while loop
+    # add remaining elements from left list if any are left
+    while i < len(left):
+
+        merged.append(left[i])
+        i += 1
+
+    # add remaining elements from right list if any are left
+    while j < len(right):
+
+        merged.append(right[j])
+        j += 1
+
+    return merged
+
+def merge_sort(nums):
+
+    # if list has 0 or 1 element it is already sorted
+    if len(nums) <= 1: # Base case
+        return nums
+
+    # find the middle index to divide the list into 2 halves
+    mid = len(nums) // 2
+
+    # divide the left half of the list
+    left = nums[:mid]
+
+    # divide the right half of the list
+    right = nums[mid:]
+
+    # recursively sort both halves using merge sort
+    left_sorted, right_sorted = merge_sort(left), merge_sort(right)
+
+    # merge the two sorted halves into one sorted list
+    sorted_nums = merge(left_sorted, right_sorted)
+
+    # return the final merged sorted list
+    return sorted_nums   
+
+
+print(merge([1, 4, 7, 9, 11], [-1, 0, 2, 3, 8, 12]))
+print()
+
+nums0, output0 = test0['input']['nums'], test0['output']
+
+print('Input:', nums0)
+print('Expected output:', output0)
+result0 = merge_sort(nums0)
+print('Actual output:', result0)
+print('Match:', result0 == output0)
+
+print('----------------------------')
+print('\n')
+
+
+result_merges_sort = evaluate_test_cases(merge_sort,tests[:6])
+
+print('\n')
 
 
 
+# To analyze the complexity of merge sort we will add some scaffolding to the code of both merge and merge sort
+
+# def merge(nums1, nums2, depth=0):
+#     print('  '*depth, 'merge:', nums1, nums2)
+#     i, j, merged = 0, 0, []
+#     while i < len(nums1) and j < len(nums2):
+#         if nums1[i] <= nums2[j]:
+#             merged.append(nums1[i])
+#             i += 1
+#         else:
+#             merged.append(nums2[j])
+#             j += 1
+#     return merged + nums1[i:] + nums2[j:]
+        
+# def merge_sort(nums, depth=0):
+#     print('  '*depth, 'merge_sort:', nums)
+#     if len(nums) < 2: 
+#         return nums
+#     mid = len(nums) // 2
+#     return merge(merge_sort(nums[:mid], depth+1), merge_sort(nums[mid:], depth+1), depth+1)
+
+# print(merge_sort([5, -12, 2, 6, 1, 23, 7, 7, -12]))
+
+# print('\n')
+
+# Another attempt at a better scaffolding 
+
+def merge(nums1, nums2, depth=0):
+
+    indent = "    " * depth
+
+    print(f"{indent}MERGE")
+    print(f"{indent}LEFT  : {nums1}")
+    print(f"{indent}RIGHT : {nums2}")
+
+    merged = []
+
+    i, j = 0, 0
+
+    while i < len(nums1) and j < len(nums2):
+
+        print(f"{indent}COMPARE -> {nums1[i]} vs {nums2[j]}")
+
+        if nums1[i] <= nums2[j]:
+
+            print(f"{indent}TAKE LEFT  -> {nums1[i]}")
+
+            merged.append(nums1[i])
+
+            i += 1
+
+        else:
+
+            print(f"{indent}TAKE RIGHT -> {nums2[j]}")
+
+            merged.append(nums2[j])
+
+            j += 1
+
+        print(f"{indent}MERGED NOW -> {merged}")
+        print()
+
+    if i < len(nums1):
+
+        print(f"{indent}LEFT REMAINING  -> {nums1[i:]}")
+
+    if j < len(nums2):
+
+        print(f"{indent}RIGHT REMAINING -> {nums2[j:]}")
+
+    result = merged + nums1[i:] + nums2[j:]
+
+    print(f"{indent}MERGE RESULT -> {result}")
+    print()
+
+    return result
+
+
+def merge_sort(nums, depth=0):
+
+    indent = "    " * depth
+
+    print(f"{indent}MERGE_SORT -> {nums}")
+
+    if len(nums) <= 1:
+
+        print(f"{indent}BASE CASE  -> {nums}")
+        print()
+
+        return nums
+
+    mid = len(nums) // 2
+
+    left = nums[:mid]
+    right = nums[mid:]
+
+    print(f"{indent}SPLIT")
+    print(f"{indent}LEFT  : {left}")
+    print(f"{indent}RIGHT : {right}")
+    print()
+
+    left_sorted = merge_sort(left, depth + 1)
+
+    right_sorted = merge_sort(right, depth + 1)
+
+    print(f"{indent}MERGING SORTED HALVES")
+    print(f"{indent}LEFT SORTED  : {left_sorted}")
+    print(f"{indent}RIGHT SORTED : {right_sorted}")
+    print()
+
+    return merge(left_sorted, right_sorted, depth + 1)
+
+
+print()
+print("FINAL RESULT ->", merge_sort([5, -12, 2, 6, 1, 23, 7, 7, -12]))
+print()
+
+
+
+
+# In merge sort the main operation responsible for most of the work is the merge operation.The splitting itself is cheap because we are mainly just dividing the list into smaller parts.The actual sorting happens during merging where elements are compared and combined into a new sorted list.
+
+# The merge function works on two already sorted lists.During merging we repeatedly compare the current elements of both lists, append the smaller one into a new merged list and move the corresponding pointer forward.
+
+# Since each element is processed only once during merging, if the total number of elements in both lists is n,then the merge operation takes O(n) time.
+
+# Merge sort follows the divide and conquer strategy. It repeatedly divides the original list into two halves recursively until we reach lists of size 1. Lists of size 1 are automatically sorted and become the base case of recursion.
+
+# The recursive splitting creates a tree like structure.
+
+# Example:
+# Level 0 -> 1 list of size n
+# Level 1 -> 2 lists of size n/2
+# Level 2 -> 4 lists of size n/4
+# Level 3 -> 8 lists of size n/8
+
+# Even though the number of lists increases at every level,
+# the total amount of data across that entire level always remains n.
+
+# Example:
+# 2 * (n/2) = n
+# 4 * (n/4) = n
+# 8 * (n/8) = n
+
+# So the total merge work done at every level of the recursion tree is O(n).
+
+# Now we calculate how many levels exist in the recursion tree.
+# At every level the list size keeps getting divided by 2.
+
+# n -> n/2 -> n/4 -> n/8 -> ... -> 1
+
+# The number of times we can divide n by 2 before reaching 1 is log₂(n). Therefore the recursion tree has log(n) levels.
+
+# Since: Every level does O(n) work and there are O(log n) levels
+
+# Total Time Complexity:
+# O(n * log n)
+
+# Therefore merge sort has:
+# Best Case Time Complexity    = O(n log n)
+# Average Case Time Complexity = O(n log n)
+# Worst Case Time Complexity   = O(n log n)
+
+# Unlike bubble sort and insertion sort, merge sort performs efficiently even for very large datasets because its growth rate is much slower than quadratic complexity.
+
+# Space Complexity
+
+# Merge sort creates new lists during the merge process. Inside merge() we create a new merged list where sorted elements are stored.
+
+# Because additional arrays are created during merging, merge sort is not an in-place sorting algorithm like bubble sort or insertion sort.
+
+# At first glance it may seem that every recursion level requires O(n) space, which may look like O(n log n) space overall.
+
+# However after a merge operation finishes, older smaller sublists are no longer needed and their memory can be reused or discarded.
+
+# Therefore the maximum additional memory used at any point remains proportional to n. Thus Additional Space Complexity = O(n)
+
+# Merge sort basically trades additional memory usage for significantly faster sorting performance.
