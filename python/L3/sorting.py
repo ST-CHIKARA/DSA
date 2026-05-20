@@ -570,3 +570,214 @@ print()
 # Therefore the maximum additional memory used at any point remains proportional to n. Thus Additional Space Complexity = O(n)
 
 # Merge sort basically trades additional memory usage for significantly faster sorting performance.
+
+
+
+# Now after seeing how merge sort works and the inefficiencies it has that requires it to allocate additional space as large as the input itself. That makes it somewhat slow in practice because memory allocation is far more expensive than comparisons or swapping. So to overcome that we apply a new algo called quick sort.
+
+# Quick sort
+
+# Basically it works like this :-
+
+# 1. If the list is empty or has just one element return it because the list is already sorted
+
+# 2. Pick a random element from the list this is called a pivot
+
+# 3. Reorder the list so that all elements with values less than or equal to the pivot comes before the pivot, while all elements with value greater than the pivot comes after it. This is called partitioning 
+
+# 4. The pivot element divides the array into 2 parts which can be sorted independently by making a recursive call to quicksort.
+
+def partition(nums, start=0, end=None):
+    if end is None:
+        end = len(nums) - 1
+
+    pivot = nums[end]
+    l, r = start, end - 1
+
+    while l <= r:
+        while l <= r and nums[l] <= pivot:
+            l += 1
+
+        while l <= r and nums[r] > pivot:
+            r -= 1
+
+        if l < r:
+            nums[l], nums[r] = nums[r], nums[l]
+
+    nums[l], nums[end] = nums[end], nums[l]
+    return l
+
+def quicksort(nums, start=0, end=None):
+    if end is None:
+        end = len(nums) - 1
+
+    if start < end:
+        pivot = partition(nums, start, end)
+        quicksort(nums, start, pivot - 1)
+        quicksort(nums, pivot + 1, end)
+
+    return nums
+
+l1 = [1, 5, 6, 2, 0, 11, 3]
+pivot = partition(l1)
+print(l1, pivot)
+print()
+
+
+nums0, output0 = test0['input']['nums'], test0['output']
+
+print('Input:', nums0)
+print('Expected output:', output0)
+result0 = quicksort(nums0)
+print('Actual output:', result0)
+print('Match:', result0 == output0)
+print('\n')
+
+
+result_quicksort = evaluate_test_cases(quicksort,tests[:6])
+print('\n')
+
+
+# Analyzing the complexity
+
+# In quicksort the main operation responsible for most of the work is the partition operation. During partitioning we rearrange elements around a pivot element so that: all elements smaller than or equal to the pivot move to the left side and all elements greater than the pivot move to the right side.
+
+# The partition function mainly performs:
+# 1. comparisons
+# 2. pointer movement
+# 3. swaps
+
+# During one partition operation each element is usually visited once by either the left or right pointer. Therefore partitioning a list of size n takes O(n) time.
+
+# After partitioning: the pivot reaches its final correct sorted position.
+# Then quicksort recursively sorts: the left side of the pivot and the right side of the pivot
+
+# Best Case / Average Case :- The best and average case happen when the pivot divides the list into two nearly equal halves.
+
+
+# Similar to merge sort,the recursive partitioning creates a tree like structure. Even though the number of sublists increases at every level, the total amount of data processed across that level still remains n.
+
+
+
+# Since partitioning each level together costs O(n), the total work done at every level of the recursion tree is O(n).
+
+# At every level the list size keeps getting divided roughly by 2.
+
+# n -> n/2 -> n/4 -> n/8 -> ... -> 1
+
+# The number of times we can divide n by 2 before reaching 1 is log₂(n). Therefore the recursion tree has O(log n) levels.
+
+# Since: Every level does O(n) work and there are O(log n) levels
+
+# Total Time Complexity: O(n * log n)
+
+# Therefore quicksort has:
+# Best Case Time Complexity    = O(n log n)
+# Average Case Time Complexity = O(n log n)
+
+
+# Worst Case Complexity
+
+# The worst case happens when the pivot repeatedly becomes the smallest or largest element.
+
+# Example: [1,2,3,4,5] if the last element is always chosen as pivot. Partitioning becomes extremely unbalanced. Instead of dividing into: n/2 and n/2. We get: n-1 and 0 Then: n-2 and 0. Then: n-3 and 0
+
+# This creates a deep recursive chain instead of a balanced recursion tree.Total comparisons become: n + (n-1) + (n-2) + ... + 2 + 1. Using arithmetic series: = n * (n-1) / 2. Which approximately grows like n². Therefore: Worst Case Time Complexity = O(n²)
+
+
+
+# Space Complexity
+
+# Unlike merge sort, quicksort does not create large extra merged arrays. Partitioning mostly happens inside the same original list by swapping elements. Therefore quicksort is considered an in-place sorting algorithm.
+
+# The partition process itself only uses a few helper variables like: left pointer, right pointer, pivot position
+
+# So the additional working memory used during partitioning is O(1). However recursive function calls still use stack memory.
+
+# In the average case: recursion depth becomes O(log n)
+
+# In the worst case:recursion depth becomes O(n)
+
+# Therefore:
+# Average Case Space Complexity = O(log n)
+# Worst Case Space Complexity   = O(n)
+
+# Quicksort basically trades the guaranteed stability of merge sort for faster practical performance and lower memory usage.
+
+
+
+
+# Lets come back to our original question 
+
+# Q. You're working on a new feature on Jovian called "Top Notebooks of the Week". Write a function to sort a list of notebooks in decreasing order of likes. Keep in mind that up to millions of notebooks can be created every week, so your function needs to be as efficient as possible.
+
+# Here we need to we need to sort objects, not just numbers. Also, we want to sort them in the descending order of likes. To achieve this, all we need is a custom comparison function to compare two notebooks.
+
+
+class Notebook:
+    def __init__(self, title, username, likes):
+        self.title, self.username, self.likes = title, username, likes
+        
+    def __repr__(self):
+        return f'Notebook <"{self.username}/{self.title}", {self.likes} likes>'
+
+    def __str__(self):
+        return f'"{self.title}" by @{self.username} ({self.likes} likes)'
+
+
+nb0 = Notebook('pytorch-basics', 'aakashns', 373)
+nb1 = Notebook('linear-regression', 'siddhant', 532)
+nb2 = Notebook('logistic-regression', 'vikas', 31)
+nb3 = Notebook('feedforward-nn', 'sonaksh', 94)
+nb4 = Notebook('cifar10-cnn', 'biraj', 2)
+nb5 = Notebook('cifar10-resnet', 'tanya', 29)
+nb6 = Notebook('anime-gans', 'hemanth', 80)
+nb7 = Notebook('python-fundamentals', 'vishal', 136)
+nb8 = Notebook('python-functions', 'aakashns', 74)
+nb9 = Notebook('python-numpy', 'siddhant', 92)
+
+
+notebooks = [nb0, nb1, nb2, nb3, nb4, nb5,nb6, nb7, nb8, nb9]
+
+
+def compare_likes(nb1, nb2):
+    if nb1.likes > nb2.likes:
+        return 'lesser'
+    elif nb1.likes == nb2.likes:
+        return 'equal'
+    elif nb1.likes < nb2.likes:
+        return 'greater' 
+    
+def default_compare(x, y):
+    if x < y:
+        return 'less'
+    elif x == y:
+        return 'equal'
+    else:
+        return 'greater'
+
+def merge_sort(objs, compare=default_compare):
+    if len(objs) < 2:
+        return objs
+    mid = len(objs) // 2
+    return merge(merge_sort(objs[:mid], compare), 
+                 merge_sort(objs[mid:], compare), 
+                 compare)
+
+def merge(left, right, compare):
+    i, j, merged = 0, 0, []
+    while i < len(left) and j < len(right):
+        result = compare(left[i], right[j])
+        if result == 'lesser' or result == 'equal':
+            merged.append(left[i])
+            i += 1
+        else:
+            merged.append(right[j])
+            j += 1
+    return merged + left[i:] + right[j:]
+
+
+sorted_notebooks = merge_sort(notebooks, compare_likes)
+
+print(sorted_notebooks)
+print('\n')
